@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/CMakeFiles/Eigen"
+		},
+		{
+			"file" : "/Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/CMakeFiles/Eigen.rule"
+		},
+		{
+			"file" : "/Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/CMakeFiles/Eigen-complete.rule"
+		},
+		{
+			"file" : "/Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/Eigen-prefix/src/Eigen-stamp/Eigen-build.rule"
+		},
+		{
+			"file" : "/Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/Eigen-prefix/src/Eigen-stamp/Eigen-configure.rule"
+		},
+		{
+			"file" : "/Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/Eigen-prefix/src/Eigen-stamp/Eigen-download.rule"
+		},
+		{
+			"file" : "/Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/Eigen-prefix/src/Eigen-stamp/Eigen-install.rule"
+		},
+		{
+			"file" : "/Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/Eigen-prefix/src/Eigen-stamp/Eigen-mkdir.rule"
+		},
+		{
+			"file" : "/Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/Eigen-prefix/src/Eigen-stamp/Eigen-patch.rule"
+		},
+		{
+			"file" : "/Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/Eigen-prefix/src/Eigen-stamp/Eigen-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"Eigen"
+		],
+		"name" : "Eigen"
+	}
+}

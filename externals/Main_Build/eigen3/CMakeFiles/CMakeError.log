@@ -1,0 +1,79 @@
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_Wlogicalop failed with the following output:
+Change Dir: /Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/Main_Build/eigen3/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_77c9c/fast && /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_77c9c.dir/build.make CMakeFiles/cmTC_77c9c.dir/build
+Building CXX object CMakeFiles/cmTC_77c9c.dir/src.cxx.o
+/usr/bin/clang++ -DCOMPILER_SUPPORT_Wlogicalop  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wshorten-64-to-32 -Werror -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk   -Wlogical-op -MD -MT CMakeFiles/cmTC_77c9c.dir/src.cxx.o -MF CMakeFiles/cmTC_77c9c.dir/src.cxx.o.d -o CMakeFiles/cmTC_77c9c.dir/src.cxx.o -c /Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/Main_Build/eigen3/CMakeFiles/CMakeTmp/src.cxx
+error: unknown warning option '-Wlogical-op'; did you mean '-Wlong-long'? [-Werror,-Wunknown-warning-option]
+make[4]: *** [CMakeFiles/cmTC_77c9c.dir/src.cxx.o] Error 1
+make[3]: *** [cmTC_77c9c/fast] Error 2
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_wd981 failed with the following output:
+Change Dir: /Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/Main_Build/eigen3/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_a8048/fast && /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_a8048.dir/build.make CMakeFiles/cmTC_a8048.dir/build
+Building CXX object CMakeFiles/cmTC_a8048.dir/src.cxx.o
+/usr/bin/clang++ -DCOMPILER_SUPPORT_wd981  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wshorten-64-to-32 -Wenum-conversion -Wc++11-extensions -Wdouble-promotion -Wshadow -Wno-psabi -Wno-variadic-macros -Wno-long-long -fno-check-new -fno-common -fstrict-aliasing -Werror -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk   -wd981 -MD -MT CMakeFiles/cmTC_a8048.dir/src.cxx.o -MF CMakeFiles/cmTC_a8048.dir/src.cxx.o.d -o CMakeFiles/cmTC_a8048.dir/src.cxx.o -c /Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/Main_Build/eigen3/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unknown argument: '-wd981'
+make[4]: *** [CMakeFiles/cmTC_a8048.dir/src.cxx.o] Error 1
+make[3]: *** [cmTC_a8048/fast] Error 2
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_wd2304 failed with the following output:
+Change Dir: /Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/Main_Build/eigen3/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_00b17/fast && /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_00b17.dir/build.make CMakeFiles/cmTC_00b17.dir/build
+Building CXX object CMakeFiles/cmTC_00b17.dir/src.cxx.o
+/usr/bin/clang++ -DCOMPILER_SUPPORT_wd2304  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wshorten-64-to-32 -Wenum-conversion -Wc++11-extensions -Wdouble-promotion -Wshadow -Wno-psabi -Wno-variadic-macros -Wno-long-long -fno-check-new -fno-common -fstrict-aliasing -Werror -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk   -wd2304 -MD -MT CMakeFiles/cmTC_00b17.dir/src.cxx.o -MF CMakeFiles/cmTC_00b17.dir/src.cxx.o.d -o CMakeFiles/cmTC_00b17.dir/src.cxx.o -c /Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/Main_Build/eigen3/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unknown argument: '-wd2304'
+make[4]: *** [CMakeFiles/cmTC_00b17.dir/src.cxx.o] Error 1
+make[3]: *** [cmTC_00b17/fast] Error 2
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_STRICTANSI failed with the following output:
+Change Dir: /Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/Main_Build/eigen3/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_90fb0/fast && /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_90fb0.dir/build.make CMakeFiles/cmTC_90fb0.dir/build
+Building CXX object CMakeFiles/cmTC_90fb0.dir/src.cxx.o
+/usr/bin/clang++ -DCOMPILER_SUPPORT_STRICTANSI  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wshorten-64-to-32 -Wenum-conversion -Wc++11-extensions -Wdouble-promotion -Wshadow -Wno-psabi -Wno-variadic-macros -Wno-long-long -fno-check-new -fno-common -fstrict-aliasing -Werror -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk   -strict-ansi -MD -MT CMakeFiles/cmTC_90fb0.dir/src.cxx.o -MF CMakeFiles/cmTC_90fb0.dir/src.cxx.o.d -o CMakeFiles/cmTC_90fb0.dir/src.cxx.o -c /Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/Main_Build/eigen3/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unknown argument: '-strict-ansi'
+make[4]: *** [CMakeFiles/cmTC_90fb0.dir/src.cxx.o] Error 1
+make[3]: *** [cmTC_90fb0/fast] Error 2
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_OPENMP failed with the following output:
+Change Dir: /Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/Main_Build/eigen3/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_e52d7/fast && /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_e52d7.dir/build.make CMakeFiles/cmTC_e52d7.dir/build
+Building CXX object CMakeFiles/cmTC_e52d7.dir/src.cxx.o
+/usr/bin/clang++ -DCOMPILER_SUPPORT_OPENMP  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wshorten-64-to-32 -Wenum-conversion -Wc++11-extensions -Wdouble-promotion -Wshadow -Wno-psabi -Wno-variadic-macros -Wno-long-long -fno-check-new -fno-common -fstrict-aliasing -Qunused-arguments -ansi  -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk   -fopenmp -MD -MT CMakeFiles/cmTC_e52d7.dir/src.cxx.o -MF CMakeFiles/cmTC_e52d7.dir/src.cxx.o.d -o CMakeFiles/cmTC_e52d7.dir/src.cxx.o -c /Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/Main_Build/eigen3/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unsupported option '-fopenmp'
+make[4]: *** [CMakeFiles/cmTC_e52d7.dir/src.cxx.o] Error 1
+make[3]: *** [cmTC_e52d7/fast] Error 2
+
+
+Source file was:
+int main() { return 0; }
+Looking for a Fortran compiler failed with the following output:
+-- The Fortran compiler identification is unknown
+CMake Error at CMakeLists.txt:2 (project):
+  No CMAKE_Fortran_COMPILER could be found.
+
+  Tell CMake where to find the compiler by setting either the environment
+  variable "FC" or the CMake cache entry CMAKE_Fortran_COMPILER to the full
+  path to the compiler, or to the compiler name if it is in the PATH.
+
+
+-- Configuring incomplete, errors occurred!
+See also "/Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/Main_Build/eigen3/blas/CMakeFiles/CheckFortran/CMakeFiles/CMakeOutput.log".
+See also "/Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/Main_Build/eigen3/blas/CMakeFiles/CheckFortran/CMakeFiles/CMakeError.log".
+

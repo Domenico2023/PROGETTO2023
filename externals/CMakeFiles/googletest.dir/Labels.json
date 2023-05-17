@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/CMakeFiles/googletest"
+		},
+		{
+			"file" : "/Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/CMakeFiles/googletest.rule"
+		},
+		{
+			"file" : "/Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/CMakeFiles/googletest-complete.rule"
+		},
+		{
+			"file" : "/Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/googletest-prefix/src/googletest-stamp/googletest-build.rule"
+		},
+		{
+			"file" : "/Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/googletest-prefix/src/googletest-stamp/googletest-configure.rule"
+		},
+		{
+			"file" : "/Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/googletest-prefix/src/googletest-stamp/googletest-download.rule"
+		},
+		{
+			"file" : "/Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/googletest-prefix/src/googletest-stamp/googletest-install.rule"
+		},
+		{
+			"file" : "/Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/googletest-prefix/src/googletest-stamp/googletest-mkdir.rule"
+		},
+		{
+			"file" : "/Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/googletest-prefix/src/googletest-stamp/googletest-patch.rule"
+		},
+		{
+			"file" : "/Users/domenico/Desktop/PCS2023/PCS2023_Exercises/externals/googletest-prefix/src/googletest-stamp/googletest-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"googletest"
+		],
+		"name" : "googletest"
+	}
+}
