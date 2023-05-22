@@ -1,0 +1,62 @@
+
+Classi:
+
+-Punto:
+coord x,y;
+ID;
+*succ;
+*prec;
+
+
+-Triangolo:
+punti (vettore di Punto 3);
+lati (vettore 3*2 ID_punti);
+ID;
+area;
+#triangoli adiacenti (vettore 3*(2+1) 2=ID_punti(lato), 1=ID_triangolo);
+# per la difficile possiamo creare una matrice di adiacenza
+lato_lungo (ID_punti);
+
+aggiungi_adiacenza((vector?)ID_lati, ID_triangolo);
+
+
+-Mesh:
+triangoli (vettore di Triangolo n); [ordinati per area]
+
+public raffinamento(theta):
+	ID_triangoli (vettore top theta aree);
+	[estrae uno (o due) ID ad ogni giro]
+private dividi_triangolo():
+	
+public costruisci_adiacenze();
+
+
+.hpp:
+MergeSort (per area);
+
+
+
+
+dividi_triangolo:
+calcolare punto medio lato lungo;
+estrarre ID primo triangolo;
+estrarre ID secondo triangolo;
+costruire triangoli 1a e 1b e aggiungerli alla lista;
+costruire triangoli 2a e 2b e aggiungerli alla lista;
+adiacenze triangoli 1a e 1b;
+adiacenze triangoli 2a e 2b;
+eliminare triangolo 1 dalla lista;
+eliminare triangolo 2 dalla lista;
+
+
+
+dividi_triangolo <versione_difficile>:
+calcolo punto medio lato lungo;
+costruisco triangoli;
+adiacenze (anche provvisorie con il triangolo intero);
+se m_vecchio != m_nuovo :
+	ricorsione sul triangolo adiacente;
+return;
+
+
+
