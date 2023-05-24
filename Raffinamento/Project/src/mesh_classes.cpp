@@ -16,11 +16,14 @@ namespace ProjectLibrary
          p2.x, p2.y, 1,
          p3.x, p3.y, 1;
     return 0.5*M.determinant();
-  }
+  }  
 
   Triangle::Triangle(array<Point,3> points): points(points)
   {
-    for(unsigned int i=0; i<3; i++) {edges[i] = Edge(points[i].id,points[(i+1)%3].id);}
+    for(unsigned int i=0; i<3; i++) {edges[i] = Edge(points[i].id,points[(i+1)%3].id);}  //si può orientare
+    vector<Edge> edg(begin(edges),end(edges));
+    MSort(edg);
+    edges = to_array(edg);  //da finire
     area = AreaWithSign(points[0],points[1],points[2]);
     if(area>0)
     {
@@ -106,7 +109,16 @@ namespace ProjectLibrary
 
         converter >> id >> marker >> vertices[0] >> vertices[1];
 
-        edges.push_back(Edge(vertices[0],vertices[1]));
+        Edge E(vertices[0],vertices[1]);
+        unsigned int vertice = vertices[0];
+        auto p1 = find_if(points.begin(), points.end(), [vertice](Point point){return point.id == vertice;});
+        vertice = vertices[1];
+        auto p2 = find_if(points.begin(), points.end(), [vertice](Point point){return point.id == vertice;});
+        Point pp1 = points[distance(points.begin(),p1)];
+        Point pp2 = points[distance(points.begin(),p2)];
+
+        E.length = sqrt(pow(abs(pp1.x-pp2.x),2)+pow(abs(pp1.y-pp2.y),2));
+        edges.push_back(E);
       }
       return true;
   }
@@ -162,8 +174,25 @@ namespace ProjectLibrary
 
   void Mesh::Refining(double &theta)
   {
+    // generazione del vettore di triangoli ordinato per area e vettore dei primi n_theta elementi
+    vector<Triangle> top_theta, sorted_vec = triangles;
+    MSort(sorted_vec);
+    unsigned int n_theta = round(theta*nTriangles);
+    top_theta = {sorted_vec.begin(), sorted_vec.begin()+n_theta};
 
-    vector<unsigned int> top_theta;
+
+    // ciclo per ogni triangolo in top_theta:
+      // dividi_triangolo (e ricalcola adiacenze)
+
+    while(n_theta > 0)
+    {
+        // si potrebbero spostare top_theta e n_theta direttamente come attributi di Mesh
+      DivideTriangle_base(top_theta, n_theta);
+    }
+  }
+
+  void Mesh::DivideTriangle_base(vector<Triangle> top_theta, unsigned int n_theta)
+  {
 
   }
 

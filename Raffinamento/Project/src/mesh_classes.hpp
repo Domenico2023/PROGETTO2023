@@ -40,9 +40,14 @@ namespace ProjectLibrary
   {
     unsigned int ID1;
     unsigned int ID2;
+    double length;
     Edge() = default;
-    Edge(unsigned int ID1, unsigned int ID2): ID1(ID1), ID2(ID2){}
+    Edge(unsigned int ID1, unsigned int ID2);
   };
+  inline bool operator>(const Edge& E1, const Edge& E2){return E1.length > E2.length + Point::geometricTol * max(E1.length, E2.length);}
+  inline bool operator<=(const Edge& E1, const Edge& E2){return !(E1 > E2);}
+  inline ostream& operator<<(ostream& os, const Edge& E1){os << E1.ID1 << " " << E1.ID2; return os;}
+
 
   struct Triangle
   {
@@ -83,7 +88,8 @@ namespace ProjectLibrary
       bool ImportCell0D(string &cell0D);
       bool ImportCell1D(string &cell1D);
       bool ImportCell2D(string &cell2D);
-      void DivideTriangle(unsigned int &ID);
+      void DivideTriangle_base(vector<Triangle> top_theta, unsigned int n_theta);
+      void DivideTriangle_advanced(vector<Triangle> top_theta, unsigned int n_theta);
       void InsertAdjacence(unsigned int &TID1, unsigned int &TID2, Edge &edge);
       void InsertAdjacences(vector<unsigned int> &TID);
   };
