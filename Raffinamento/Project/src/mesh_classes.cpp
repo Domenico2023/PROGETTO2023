@@ -18,12 +18,19 @@ namespace ProjectLibrary
     return 0.5*M.determinant();
   }  
 
-  Triangle::Triangle(array<Point,3> points): points(points)
+  Triangle::Triangle(array<Point,3> set_points): points(set_points)
   {
-    for(unsigned int i=0; i<3; i++) {edges[i] = Edge(points[i].id,points[(i+1)%3].id);}  //si può orientare
-    vector<Edge> edg(begin(edges),end(edges));
-    MSort(edg);
-    edges = to_array(edg);  //da finire
+    edges.reserve(3);
+    for(unsigned int i=0; i<3; i++)
+    {
+      Edge E(points[i].id,points[(i+1)%3].id);
+      edges.push_back(E);
+    }
+//    for(unsigned int i=0; i<3; i++) {edges.push_back(Edge(points[i].id,points[(i+1)%3].id));}
+//    {edges[i] = Edge(points[i].id,points[(i+1)%3].id);}  //si può orientare
+//    vector<Edge> edg(begin(edges),end(edges));
+    MSort(edges);
+//    copy(edg.begin(), edg.end(), edges);
     area = AreaWithSign(points[0],points[1],points[2]);
     if(area>0)
     {
@@ -46,14 +53,14 @@ namespace ProjectLibrary
     }
   }
 
-  Mesh::Mesh(string &cell0D, string &cell1D, string &cell2D)
+  Mesh::Mesh(const string &cell0D, const string &cell1D, const string &cell2D)
   {
     if(!ImportCell0D(cell0D)){cerr<<"Error in import file"<<endl;}
     if(!ImportCell1D(cell1D)){cerr<<"Error in import file"<<endl;}
     if(!ImportCell2D(cell2D)){cerr<<"Error in import file"<<endl;}
   }
 
-  bool Mesh::ImportCell0D(string &cell0D)
+  bool Mesh::ImportCell0D(const string &cell0D)
   {
     ifstream file;
     file.open("./"+cell0D);
@@ -84,7 +91,7 @@ namespace ProjectLibrary
     return true;
   }
 
-  bool Mesh::ImportCell1D(string &cell1D)
+  bool Mesh::ImportCell1D(const string &cell1D)
   {
       ifstream file;
       file.open("./"+cell1D);
@@ -123,7 +130,7 @@ namespace ProjectLibrary
       return true;
   }
 
-  bool Mesh::ImportCell2D(string &cell2D)
+  bool Mesh::ImportCell2D(const string &cell2D)
   {
     ifstream file;
     file.open("./"+cell2D);
@@ -179,7 +186,6 @@ namespace ProjectLibrary
     MSort(sorted_vec);
     unsigned int n_theta = round(theta*nTriangles);
     top_theta = {sorted_vec.begin(), sorted_vec.begin()+n_theta};
-
 
     // ciclo per ogni triangolo in top_theta:
       // dividi_triangolo (e ricalcola adiacenze)

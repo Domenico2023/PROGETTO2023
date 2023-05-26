@@ -1,16 +1,28 @@
-#ifndef __TEST_EMPTY_H
-#define __TEST_EMPTY_H
+#ifndef __TEST_RAFFINAMENTO_H
+#define __TEST_RAFFINAMENTO_H
 
 #include <gtest/gtest.h>
 
-#include "empty_class.hpp"
+//#include "mesh_classes.hpp"
+#include "sorting.hpp"
 
-using namespace testing;
+//using namespace testing;
+//using namespace ProjectLibrary;
+using namespace SortLibrary;
 
-TEST(TestEmpty, TestEmpty)
+TEST(TestSorting, TestMergeSort)
 {
-  ProjectLibrary::Empty empty;
-  ASSERT_NO_THROW(empty.Show());
+  vector<int> v = {44, 25, 10, 31, 25, 48, 37, 43, 18, 48, 27};
+  MSort<int>(v);
+  vector<int> sortedV = {10, 18, 25, 25, 27, 31, 37, 43, 44, 48, 48};
+  EXPECT_EQ(v, sortedV);
 }
 
-#endif // __TEST_EMPTY_H
+
+//TEST(TestRaffinamento, Test)
+//{
+
+//  ASSERT_NO_THROW(empty.Show());
+//}
+
+#endif // __TEST_RAFFINAMENTO_H

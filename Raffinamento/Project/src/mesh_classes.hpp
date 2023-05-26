@@ -42,7 +42,7 @@ namespace ProjectLibrary
     unsigned int ID2;
     double length;
     Edge() = default;
-    Edge(unsigned int ID1, unsigned int ID2);
+    Edge(unsigned int id1, unsigned int id2): ID1(id1), ID2(id2){}
   };
   inline bool operator>(const Edge& E1, const Edge& E2){return E1.length > E2.length + Point::geometricTol * max(E1.length, E2.length);}
   inline bool operator<=(const Edge& E1, const Edge& E2){return !(E1 > E2);}
@@ -52,12 +52,13 @@ namespace ProjectLibrary
   struct Triangle
   {
     array<Point,3> points;
-    array<Edge,3> edges;
+    //array<Edge,3> edges;
+    vector<Edge> edges;
     unsigned int ID;
     double area;
 
     Triangle() = default;
-    Triangle(array<Point,3> points);
+    Triangle(array<Point,3> set_points);
   };
   inline bool operator>(const Triangle& T1, const Triangle& T2){return T1.area > T2.area + Point::geometricTol_Squared * max(T1.area, T2.area);}
   inline bool operator<=(const Triangle& T1, const Triangle& T2){return !(T1 > T2);}
@@ -68,7 +69,7 @@ namespace ProjectLibrary
 
   class Mesh
   {
-    protected:
+    public:  // da riportare a protected
       unsigned int nPoints;
       vector<Point> points;
       unsigned int nEdges;
@@ -80,14 +81,15 @@ namespace ProjectLibrary
     public:
       Mesh() = default;
 //      Mesh(vector<Triangle> triangles);
-      Mesh(string &cell0D, string &cell1D, string &cell2D);
+      Mesh(const string &cell0D, const string &cell1D, const string &cell2D);
       void Refining(double &theta);
       void AddTriangle(Triangle &t);
 
   private:
-      bool ImportCell0D(string &cell0D);
-      bool ImportCell1D(string &cell1D);
-      bool ImportCell2D(string &cell2D);
+      bool ImportCell0D(const string &cell0D);
+      bool ImportCell1D(const string &cell1D);
+      bool ImportCell2D(const string &cell2D);
+      bool ExportMesh();
       void DivideTriangle_base(vector<Triangle> top_theta, unsigned int n_theta);
       void DivideTriangle_advanced(vector<Triangle> top_theta, unsigned int n_theta);
       void InsertAdjacence(unsigned int &TID1, unsigned int &TID2, Edge &edge);
