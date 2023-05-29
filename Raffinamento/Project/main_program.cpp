@@ -20,7 +20,7 @@ using namespace ProjectLibrary;
 
 int main(int argc, char *argv[])
 {
-  Mesh M("cell0Ds.csv","cell1Ds.csv","cell2Ds.csv");
+  Mesh M("Cell0Ds.csv","Cell1Ds.csv","Cell2Ds.csv");
 
   //stampa celle 0D
   for(unsigned int i=0;i<M.nPoints;i++)

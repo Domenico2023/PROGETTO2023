@@ -63,7 +63,7 @@ namespace ProjectLibrary
   bool Mesh::ImportCell0D(const string &cell0D)
   {
     ifstream file;
-    file.open("./"+cell0D);
+    file.open("./"+cell0D); // da cambiare il path del file
     if(file.fail()){return false;}
 
     list<string> listLines;
@@ -94,7 +94,7 @@ namespace ProjectLibrary
   bool Mesh::ImportCell1D(const string &cell1D)
   {
       ifstream file;
-      file.open("./"+cell1D);
+      file.open("./"+cell1D); // da cambiare il path del file
       if(file.fail()){return false;}
 
       list<string> listLines;
@@ -133,7 +133,7 @@ namespace ProjectLibrary
   bool Mesh::ImportCell2D(const string &cell2D)
   {
     ifstream file;
-    file.open("./"+cell2D);
+    file.open("./"+cell2D); // da cambiare il path del file
     if(file.fail()){return false;}
 
     list<string> listLines;
@@ -154,11 +154,13 @@ namespace ProjectLibrary
       array<unsigned int, 3> vertices;
       array<unsigned int, 3> edges;
 
+
       converter >> id;
       for(unsigned int i = 0; i < 3; i++)
         converter >> vertices[i];
       for(unsigned int i = 0; i < 3; i++)
         converter >> edges[i];
+
 
       unsigned int vertice = vertices[0];
       auto p1 = find_if(points.begin(), points.end(), [vertice](Point point){return point.id == vertice;});
@@ -167,13 +169,15 @@ namespace ProjectLibrary
       vertice = vertices[2];
       auto p3 = find_if(points.begin(), points.end(), [vertice](Point point){return point.id == vertice;});
 
+
       // vedi https://www.geeksforgeeks.org/stdfind_if-stdfind_if_not-in-c/
       //https://stackoverflow.com/questions/15517991/search-a-vector-of-objects-by-object-attribute
       Point pp1 = points[distance(points.begin(),p1)];
       Point pp2 = points[distance(points.begin(),p2)];
       Point pp3 = points[distance(points.begin(),p3)];
-
-      triangles.push_back(Triangle({pp1,pp2,pp3}));
+      Triangle T ({pp1,pp2, pp3});
+        T.ID = id; // avendo problemi con l'id del triangolo, lo inserisco "a mano" per ognuno
+      triangles.push_back(T);
     }
     return true;
   }

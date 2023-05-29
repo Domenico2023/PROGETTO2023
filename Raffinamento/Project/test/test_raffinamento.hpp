@@ -3,7 +3,7 @@
 
 #include <gtest/gtest.h>
 
-//#include "mesh_classes.hpp"
+#include "mesh_classes.hpp"
 #include "sorting.hpp"
 
 //using namespace testing;
