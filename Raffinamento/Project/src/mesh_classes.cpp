@@ -4,11 +4,13 @@
 #include "Eigen/Eigen"
 #include <fstream>
 
+
 using namespace std;
 using namespace SortLibrary;
 
 namespace ProjectLibrary
 {
+
 double AreaTriangle(const Point& p1, const Point& p2, const Point& p3){
     MatrixXd M = MatrixXd::Ones(3,3);
 
@@ -29,6 +31,7 @@ double AreaTriangle(const Point& p1, const Point& p2, const Point& p3){
 //    return a;
 //}
 
+
   Triangle::Triangle(array<Point,3> set_points): points(set_points)
   {
 
@@ -43,6 +46,7 @@ double AreaTriangle(const Point& p1, const Point& p2, const Point& p3){
 //    {edges[i] = Edge(points[i].id,points[(i+1)%3].id);}  //si può orientare
 //    vector<Edge> edg(begin(edges),end(edges));
     MSort(edges);
+
 //    copy(edg.begin(), edg.end(), edges);
     area = AreaTriangle(points[0],points[1],points[2]);
     if(area>0)
@@ -63,6 +67,15 @@ double AreaTriangle(const Point& p1, const Point& p2, const Point& p3){
       points[2].prec = &points[0];
       points[1].prec = &points[2];
       area = abs(area);
+    }
+
+    // riordinare i punti per lato più lungo
+    while(!((points[0].id==edges[0].ID1 && points[1].id==edges[0].ID2) || (points[1].id==edges[0].ID1 && points[0].id==edges[0].ID2))){
+       Point tmp;
+       tmp = points[0];
+       points[0]=points[1];
+       points[1]=points[2];
+       points[2]=tmp;
     }
 
   }
@@ -201,7 +214,44 @@ double AreaTriangle(const Point& p1, const Point& p2, const Point& p3){
     }
     return true;
   }
+  bool Mesh::IsAdjacent(Triangle &T1,Triangle &T2){
+      for(unsigned int i=0; i<3;i++){
+          for(unsigned int k=0;k<3;k++){
+              if(T1.edges[i]==T2.edges[k])
+                  return true;
+          }
+      }
+      return false;
+  }
+  void Mesh::AdjacenceMatrix(){
+      // creo la matrice e la riempo gradualmente
+      //constexpr int dim = this->nTriangles;
+      this->adjacent = MatrixXi::Zero(nTriangles, nTriangles);
 
+      for(unsigned int i=1;i<nTriangles;i++){
+          for(unsigned int j=0;j<i;j++){
+              this->adjacent(i,j)=IsAdjacent(triangles[i],triangles[j]);
+              this->adjacent(j,i)=2; //this->adjacent(i,j);
+          }
+      }
+      //per ogni lato di ogni triangolo, scorrere tutti i lati di tutti i triangoli
+
+  }
+  Triangle Mesh::FindAdjacence(Triangle &T){
+        for(unsigned int j=0;j<nTriangles;j++){
+            if(adjacent(T.ID,j)){
+                for(unsigned int k=0;k<3;k++){
+                    if(triangles[j].edges[k]==T.edges[0]){
+                        return triangles[j];
+                    }
+                }
+            }
+
+        }
+        Triangle Tnull;
+        Tnull.ID=UINT_MAX;
+        return Tnull;
+  }
 
   void Mesh::Refining(double &theta)
   {
@@ -228,36 +278,47 @@ double AreaTriangle(const Point& p1, const Point& p2, const Point& p3){
   {
       Point medio;
       Edge newEdge1, newEdge2;
-      Triangle newTriangle1,newTriangle2 ;
-      unsigned int l=0, n=0;
+      Triangle newTriangle1,newTriangle2;
+        unsigned int i=0;
 
-    for(unsigned int k=0;k<n_theta;k++){
+    while(top_theta.size()>0)
 
-      medio = Point((top_theta[k].points[0].x+top_theta[k].points[1].x)/2,(top_theta[k].points[0].y+top_theta[k].points[1].y)/2,nPoints+1);
-      newEdge1 = Edge(top_theta[k].points[2].id, medio.id);
-      newEdge1.length = sqrt(pow(abs(top_theta[k].points[2].x-medio.x),2)+pow(abs(top_theta[k].points[2].y-medio.y),2));
-      newTriangle1 = Triangle({medio,top_theta[k].points[0],top_theta[k].points[2]});
-      newTriangle1.ID = nTriangles+n;
-      newTriangle2 = Triangle({medio,top_theta[k].points[1],top_theta[k].points[2]});
-      newTriangle2.ID = nTriangles+n+1;
-      n++;
-      unsigned int i=k+1;
-      while(i<n_theta){
-          if(top_theta[k].edges[0]<<top_theta[i]){
-              if(top_theta[i].points[l]>>newEdge1){
-                newEdge2=Edge(medio.id,top_theta[i].points[l].id);
+      medio = Point((top_theta[0].points[0].x+top_theta[0].points[1].x)/2,(top_theta[0].points[0].y+top_theta[0].points[1].y)/2,nPoints+1);
+      newEdge1 = Edge(top_theta[0].points[2].id, medio.id);
+      newEdge1.length = sqrt(pow(abs(top_theta[0].points[2].x-medio.x),2)+pow(abs(top_theta[0].points[2].y-medio.y),2));
+      newTriangle1 = Triangle({medio,top_theta[0].points[0],top_theta[0].points[2]});
+      newTriangle1.ID = top_theta[0].ID;
+      newTriangle2 = Triangle({medio,top_theta[0].points[1],top_theta[0].points[2]});
+      newTriangle2.ID = nTriangles;
 
-                break;
-              }
-              else
-                l++;
+      //n++;
+      //unsigned int i=1;
+
+      // Matrice di adiacenza con 0 e 1
+      // Anzichè copiare e incollare, possiamo fare un metodo a parte
+
+      Triangle AdjTriangle=FindAdjacence(top_theta[0]);
+
+      if(AdjTriangle.ID!=UINT_MAX){
+          Triangle newTriangle3,newTriangle4;
+          // scorro per trovare il vertice opposto al lato
+          for(; AdjTriangle.points[i]==top_theta[0].points[0] || AdjTriangle.points[i]==top_theta[0].points[1]; i++);
+
+          newEdge2 = Edge(AdjTriangle.points[i].id, medio.id);
+          newEdge2.length = sqrt(pow(abs(AdjTriangle.points[2].x-medio.x),2)+pow(abs(AdjTriangle.points[2].y-medio.y),2));
+          newTriangle3 = Triangle({medio,AdjTriangle.points[0],AdjTriangle.points[2]});
+          newTriangle3.ID = AdjTriangle.ID;
+          newTriangle4 = Triangle({medio,AdjTriangle.points[1],AdjTriangle.points[2]});
+          newTriangle4.ID = nTriangles; // Da incrementare
+
           }
-          i++;
+        top_theta.erase(top_theta.begin()); // elimino il primo triangolo
 
     }
 
-    }
-    n_theta=n_theta-n;
-  }
 
 }
+    //n_theta=n_theta-2;
+
+
+

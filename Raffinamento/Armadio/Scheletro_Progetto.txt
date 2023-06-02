@@ -41,10 +41,11 @@ dividi_triangolo:
 calcolare punto medio lato lungo;
 estrarre ID primo triangolo;
 estrarre ID secondo triangolo;
-costruire triangoli 1a e 1b e aggiungerli alla lista;
-costruire triangoli 2a e 2b e aggiungerli alla lista;
+costruire triangoli 1a e 1b;
+costruire triangoli 2a e 2b;
 adiacenze triangoli 1a e 1b;
 adiacenze triangoli 2a e 2b;
+aggiungerli alla lista;
 eliminare triangolo 1 dalla lista;
 eliminare triangolo 2 dalla lista;
 
@@ -57,6 +58,13 @@ adiacenze (anche provvisorie con il triangolo intero);
 se m_vecchio != m_nuovo :
 	ricorsione sul triangolo adiacente;
 return;
+
+COSA DA MODIFICARE
+
+costruttore Edge: da aggiungere length
+costruttore Triangle: Id
+costruire matr Adiacenza
+metodo per il punto medio e i nuovi triangoli anzichè fare copia e incolla
 
 
 
