@@ -25,7 +25,7 @@ void Merge(vector<T>& v, const unsigned int& sx, const unsigned int& cx, const u
   vector<T> sortedV(dx - sx + 1);
   while(i<=cx && j<=dx)
   {
-    if(v[i]<=v[j]) {sortedV[k] = v[i]; i++;}
+    if(v[i]>=v[j]) {sortedV[k] = v[i]; i++;}
     else {sortedV[k] = v[j]; j++;}
     k++;
   }
