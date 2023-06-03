@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 //      cout << endl;
 //  }
 
-  M.AdjacenceMatrix();
+//  M.AdjacenceMatrix();  //l'ho inserito nel costruttore della Mesh, così la calcola in automatico
   M.Refining(theta);
 
 }

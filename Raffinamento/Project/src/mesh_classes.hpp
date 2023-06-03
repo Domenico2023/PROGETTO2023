@@ -37,7 +37,7 @@ namespace ProjectLibrary
   inline bool operator==(const Point& p1, const Point& p2)
   {return (normSquared(p1.x - p2.x, p1.y - p2.y) <= Point::geometricTol * Point::geometricTol * max(normSquared(p1.x, p1.y), normSquared(p2.x, p2.y)));}
   inline bool operator!=(const Point& p1, const Point& p2){return !(p1 == p2);}
-  inline ostream& operator<<(ostream& os, const Point& p2){os << p2.id; return os;}
+  inline ostream& operator<<(ostream& os, const Point& p){os<<p.id<<" "<<p.x<<" "<<p.y; return os;}
   inline bool operator>(const Point& p1, const Point& p2){return p1.x > p2.x + Point::geometricTol * max(p1.x, p2.x);}
   inline bool operator<=(const Point& p1, const Point& p2){return !(p1 > p2);}
 
@@ -88,7 +88,7 @@ namespace ProjectLibrary
     inline bool operator!=(const Edge& E1, const Edge& E2){return !(E1 == E2);}
     inline bool operator>(const Edge& E1, const Edge& E2){return E1.length > E2.length + Point::geometricTol * max(E1.length, E2.length);}
     inline bool operator<=(const Edge& E1, const Edge& E2){return !(E1 > E2);}
-    inline ostream& operator<<(ostream& os, const Edge& E1){os << E1.id; return os;}
+    inline ostream& operator<<(ostream& os, const Edge& E){os<<E.id<<" "<<E.p1.id<<" "<<E.p2.id; return os;}
 
 
   struct Triangle
@@ -110,16 +110,21 @@ namespace ProjectLibrary
             return *this;
         }
     bool Includes(const Edge &E){for(unsigned int i=0;i<3;i++) if(this->edges[i]==E) return true; return false;}
-    Point Opposite(Edge &E){unsigned int i=0;
-                            while(E.Includes(points[i]))
-                                i++;
-                                                return points[i];}
+    Point Opposite(Edge &E){unsigned int i=0; while(E.Includes(points[i])) i++; return points[i];}
     array<Point, 3> EdgesToPoints();
   };
   inline bool operator>(const Triangle& T1, const Triangle& T2){return T1.area > T2.area + Point::geometricTol_Squared * max(T1.area, T2.area);}
   inline bool operator<=(const Triangle& T1, const Triangle& T2){return !(T1 > T2);}
   //inline bool operator>=(const Triangle& T1, const Triangle& T2){return T1 > T2;}
-  inline ostream& operator<<(ostream& os, const Triangle& T1){os << T1.id; return os;}
+  inline ostream& operator<<(ostream& os, const Triangle& T)
+  {
+    os<<T.id;
+    for(unsigned int i=0;i<T.points.size();i++)
+      os<<" "<<T.points[i].id;
+    for(unsigned int i=0;i<T.edges.size();i++)
+      os<<" "<<T.edges[i].id;
+    return os;
+  }
   inline bool operator==(const Triangle& T1, const Triangle& T2){return T1.id == T2.id;}
 
   //inline bool operator<<(const Edge& E,const Triangle& T){ // Appartiene
@@ -153,13 +158,15 @@ namespace ProjectLibrary
       Edge FindEdge(Point &p1, Point &p2);
       Edge FindEdge(unsigned int &id_e);
       Point FindPoint(unsigned int &id_p);
-
+      void ExportMesh();
 
   private:
       bool ImportCell0D(const string &cell0D);
       bool ImportCell1D(const string &cell1D);
       bool ImportCell2D(const string &cell2D);
-      bool ExportMesh();
+      void ExportCell0D(ostream& out);
+      void ExportCell1D(ostream& out);
+      void ExportCell2D(ostream& out);
       void DivideTriangle_base(vector<Triangle> &top_theta, unsigned int &n_theta);
       void DivideTriangle_advanced(vector<Triangle> &top_theta, unsigned int &n_theta);
       bool Extract(unsigned int &id, vector<Triangle> &top_theta); // si può mettere top_theta come attributo
