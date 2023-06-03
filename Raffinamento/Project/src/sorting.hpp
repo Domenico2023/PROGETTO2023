@@ -16,7 +16,12 @@ void MergeSort(vector<T>& v, const unsigned int& sx, const unsigned int& dx);
 template<typename T>
 void Merge(vector<T>& v, const unsigned int& sx, const unsigned int& cx, const unsigned int& dx);
 template<typename T>
-void MSort(vector<T>& v) {MergeSort(v,0,v.size()-1);}
+void MSort(vector<T>& v, string ord = "dec")
+{
+    //default: dec = decrease; inc = increase
+  MergeSort(v,0,v.size()-1);
+  if(ord == "inc"){reverse(v.begin(),v.end());}
+}
 
 template<typename T>
 void Merge(vector<T>& v, const unsigned int& sx, const unsigned int& cx, const unsigned int& dx)
@@ -25,7 +30,7 @@ void Merge(vector<T>& v, const unsigned int& sx, const unsigned int& cx, const u
   vector<T> sortedV(dx - sx + 1);
   while(i<=cx && j<=dx)
   {
-    if(v[i]>=v[j]) {sortedV[k] = v[i]; i++;}
+    if(v[i]>v[j]) {sortedV[k] = v[i]; i++;}
     else {sortedV[k] = v[j]; j++;}
     k++;
   }
@@ -48,6 +53,8 @@ void MergeSort(vector<T>& v, const unsigned int& sx, const unsigned int& dx)
   }
   return;
 }
+//da aggiungere una insert per vettori ordinati
+
 
 }
 

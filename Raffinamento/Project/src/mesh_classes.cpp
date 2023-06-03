@@ -31,23 +31,38 @@ double AreaTriangle(const Point& p1, const Point& p2, const Point& p3){
 //    return a;
 //}
 
+  array<Point, 3> Triangle::EdgesToPoints(){
+  array<Point, 3> pts;
 
-  Triangle::Triangle(array<Point,3> set_points): points(set_points)
+        pts[0]=edges[0].p1;
+        pts[1]=edges[0].p2;
+        if(edges[0].Includes(edges[1].p1))
+            pts[2]=edges[1].p2;
+        else
+            pts[2]=edges[1].p1;
+        return pts;
+  }
+
+  Triangle::Triangle(vector<Edge> edges, unsigned int &id): edges(edges), id(id)
   {
 
-    edges.reserve(3);
-    for(unsigned int i=0; i<3; i++)
-    {
-      Edge E(points[i].id,points[(i+1)%3].id);
-      E.length = sqrt(pow(abs(points[i].x-points[(i+1)%3].x),2)+pow(abs(points[i].y-points[(i+1)%3].y),2));
-      edges.push_back(E);
-    }
+//    this->edges.reserve(3);
+//      for(unsigned int i=0; i<3; i++)
+//      {
+//        Edge E(points[i].id,points[(i+1)%3].id);
+//        E.length = sqrt(pow(abs(points[i].x-points[(i+1)%3].x),2)+pow(abs(points[i].y-points[(i+1)%3].y),2));
+//        edges.push_back(E);
+//      }
 //    for(unsigned int i=0; i<3; i++) {edges.push_back(Edge(points[i].id,points[(i+1)%3].id));}
 //    {edges[i] = Edge(points[i].id,points[(i+1)%3].id);}  //si può orientare
 //    vector<Edge> edg(begin(edges),end(edges));
-    MSort(edges);
+
+    MSort(edges);  // di default in ordine decrescente
+
+    points=EdgesToPoints();
 
 //    copy(edg.begin(), edg.end(), edges);
+
     area = AreaTriangle(points[0],points[1],points[2]);
     if(area>0)
     {
@@ -69,14 +84,16 @@ double AreaTriangle(const Point& p1, const Point& p2, const Point& p3){
       area = abs(area);
     }
 
-    // riordinare i punti per lato più lungo
-    while(!((points[0].id==edges[0].ID1 && points[1].id==edges[0].ID2) || (points[1].id==edges[0].ID1 && points[0].id==edges[0].ID2))){
-       Point tmp;
-       tmp = points[0];
-       points[0]=points[1];
-       points[1]=points[2];
-       points[2]=tmp;
-    }
+   // riordinare i punti per lato più lungo
+
+    while(!(edges[0].Includes(points[0]) && edges[0].Includes(points[1])))
+        {
+          Point tmp;
+          tmp = points[0];
+          points[0]=points[1];
+          points[1]=points[2];
+          points[2]=tmp;
+        }                           // per costruzione di edges e points ce lo abbiamo gratis
 
   }
 
@@ -143,15 +160,17 @@ double AreaTriangle(const Point& p1, const Point& p2, const Point& p3){
 
         converter >> id >> marker >> vertices[0] >> vertices[1];
 
-        Edge E(vertices[0],vertices[1]);
-        unsigned int vertice = vertices[0];
-        auto p1 = find_if(points.begin(), points.end(), [vertice](Point point){return point.id == vertice;});
-        vertice = vertices[1];
-        auto p2 = find_if(points.begin(), points.end(), [vertice](Point point){return point.id == vertice;});
-        Point pp1 = points[distance(points.begin(),p1)];
-        Point pp2 = points[distance(points.begin(),p2)];
+        Point pt1_edge{this->FindPoint(vertices[0])};
+        Point pt2_edge{this->FindPoint(vertices[1])};
+        Edge E(pt1_edge,pt2_edge, id);
+//        unsigned int vertice = vertices[0];
+//        auto p1 = find_if(points.begin(), points.end(), [vertice](Point point){return point.id == vertice;});
+//        vertice = vertices[1];
+//        auto p2 = find_if(points.begin(), points.end(), [vertice](Point point){return point.id == vertice;});
+//        Point pp1 = points[distance(points.begin(),p1)];
+//        Point pp2 = points[distance(points.begin(),p2)];
 
-        E.length = sqrt(pow(abs(pp1.x-pp2.x),2)+pow(abs(pp1.y-pp2.y),2));
+
         edges.push_back(E);
       }
       return true;
@@ -188,22 +207,27 @@ double AreaTriangle(const Point& p1, const Point& p2, const Point& p3){
       for(unsigned int i = 0; i < 3; i++)
         converter >> edges[i];
 
-
-      unsigned int vertice = vertices[0];
-      auto p1 = find_if(points.begin(), points.end(), [vertice](Point point){return point.id == vertice;});
-      vertice = vertices[1];
-      auto p2 = find_if(points.begin(), points.end(), [vertice](Point point){return point.id == vertice;});
-      vertice = vertices[2];
-      auto p3 = find_if(points.begin(), points.end(), [vertice](Point point){return point.id == vertice;});
+//        Point pt1_tr{this->FindPoint(vertices[0])};
+//        Point pt2_tr{this->FindPoint(vertices[1])};
+//        Point pt3_tr{this->FindPoint(vertices[2])};
+//      unsigned int vertice = vertices[0];
+//      auto p1 = find_if(points.begin(), points.end(), [vertice](Point point){return point.id == vertice;});
+//      vertice = vertices[1];
+//      auto p2 = find_if(points.begin(), points.end(), [vertice](Point point){return point.id == vertice;});
+//      vertice = vertices[2];
+//      auto p3 = find_if(points.begin(), points.end(), [vertice](Point point){return point.id == vertice;});
 
 
       // vedi https://www.geeksforgeeks.org/stdfind_if-stdfind_if_not-in-c/
       //https://stackoverflow.com/questions/15517991/search-a-vector-of-objects-by-object-attribute
-      Point pp1 = points[distance(points.begin(),p1)];
-      Point pp2 = points[distance(points.begin(),p2)];
-      Point pp3 = points[distance(points.begin(),p3)];
-      Triangle T ({pp1,pp2, pp3});
-        T.ID = id; // avendo problemi con l'id del triangolo, lo inserisco "a mano" per ognuno
+//      Point pp1 = points[distance(points.begin(),p1)];
+//      Point pp2 = points[distance(points.begin(),p2)];
+//      Point pp3 = points[distance(points.begin(),p3)];
+        Edge edg1; edg1=(this->FindEdge(edges[0]));
+        Edge edg2; edg2=(this->FindEdge(edges[1]));
+        Edge edg3; edg3=(this->FindEdge(edges[2]));
+      Triangle T ({edg1,edg2,edg3}, id);
+
 //      MatrixXd M = MatrixXd::Ones(3,3);
 //        M << pp1.x, pp1.y, 1,
 //             pp2.x, pp2.y, 1,
@@ -214,43 +238,60 @@ double AreaTriangle(const Point& p1, const Point& p2, const Point& p3){
     }
     return true;
   }
-  bool Mesh::IsAdjacent(Triangle &T1,Triangle &T2){
-      for(unsigned int i=0; i<3;i++){
-          for(unsigned int k=0;k<3;k++){
-              if(T1.edges[i]==T2.edges[k])
-                  return true;
-          }
-      }
-      return false;
-  }
+
+  Point Mesh::FindPoint(unsigned int &id_p)
+    {
+      Point tmp{points[id_p]};
+      return tmp;
+    }
+
+    Edge Mesh::FindEdge(Point &p1, Point &p2)
+    {
+      auto e1 = find_if(edges.begin(), edges.end(), [p1,p2](Edge edg){return (edg.Includes(p1) && edg.Includes(p2));});
+      return edges[distance(edges.begin(),e1)];
+    }
+    Edge Mesh::FindEdge(unsigned int &id_e){
+        Edge tmp{edges[id_e]};
+        return tmp;
+    }
+
+
+
   void Mesh::AdjacenceMatrix(){
       // creo la matrice e la riempo gradualmente
       //constexpr int dim = this->nTriangles;
-      this->adjacent = MatrixXi::Zero(nTriangles, nTriangles);
+      this->adjacent = MatrixXi::Zero(nEdges, nTriangles);
 
-      for(unsigned int i=1;i<nTriangles;i++){
-          for(unsigned int j=0;j<i;j++){
-              this->adjacent(i,j)=IsAdjacent(triangles[i],triangles[j]);
-              this->adjacent(j,i)=2; //this->adjacent(i,j);
+      for(unsigned int i=0;i<nEdges;i++){
+          for(unsigned int j=0;j<nTriangles;j++){
+              this->adjacent(i,j)=IsAdjacent(triangles[j],edges[i]);
+               //this->adjacent(i,j);
           }
       }
       //per ogni lato di ogni triangolo, scorrere tutti i lati di tutti i triangoli
 
   }
-  Triangle Mesh::FindAdjacence(Triangle &T){
+  Triangle Mesh::FindAdjacence(Triangle &T, Edge &E){
         for(unsigned int j=0;j<nTriangles;j++){
-            if(adjacent(T.ID,j)){
-                for(unsigned int k=0;k<3;k++){
-                    if(triangles[j].edges[k]==T.edges[0]){
-                        return triangles[j];
-                    }
-                }
+
+            if(adjacent(E.id,j) && j!=T.id){
+                   return triangles[j];
+            }
+        }
+        Triangle Tnull;
+        Tnull.id=UINT_MAX;
+        return Tnull;
+  }
+
+  bool Mesh::Extract(unsigned int &id, vector<Triangle> &top_theta){
+        for(unsigned int i=0; i<top_theta.size(); i++){
+            if (id==top_theta[i].id){
+                top_theta.erase(top_theta.begin()+i);
+                return true;
             }
 
         }
-        Triangle Tnull;
-        Tnull.ID=UINT_MAX;
-        return Tnull;
+        return false;
   }
 
   void Mesh::Refining(double &theta)
@@ -274,22 +315,27 @@ double AreaTriangle(const Point& p1, const Point& p2, const Point& p3){
     }
   }
 
-  void Mesh::DivideTriangle_base(vector<Triangle> top_theta, unsigned int n_theta)
+  void Mesh::DivideTriangle_base(vector<Triangle> &top_theta, unsigned int &n_theta)
   {
       Point medio;
-      Edge newEdge1, newEdge2;
+      Edge newEdgeAdd1,newEdgeSplit1, newEdgeSplit2;
+      Edge newEdgeAdd2;
       Triangle newTriangle1,newTriangle2;
-        unsigned int i=0;
-
-    while(top_theta.size()>0)
+      unsigned int dnTriangles=nTriangles, dnEdges=nEdges, dnPoints=nPoints;
 
       medio = Point((top_theta[0].points[0].x+top_theta[0].points[1].x)/2,(top_theta[0].points[0].y+top_theta[0].points[1].y)/2,nPoints+1);
-      newEdge1 = Edge(top_theta[0].points[2].id, medio.id);
-      newEdge1.length = sqrt(pow(abs(top_theta[0].points[2].x-medio.x),2)+pow(abs(top_theta[0].points[2].y-medio.y),2));
-      newTriangle1 = Triangle({medio,top_theta[0].points[0],top_theta[0].points[2]});
-      newTriangle1.ID = top_theta[0].ID;
-      newTriangle2 = Triangle({medio,top_theta[0].points[1],top_theta[0].points[2]});
-      newTriangle2.ID = nTriangles;
+      dnPoints++;
+      newEdgeAdd1 = Edge(top_theta[0].points[2],medio, nEdges);
+      dnEdges++;
+      newEdgeSplit1 = Edge(top_theta[0].points[0], medio, top_theta[0].edges[0].id);
+
+      newEdgeSplit2 = Edge(top_theta[0].points[1], medio, dnEdges);
+
+      Edge third = FindEdge(top_theta[0].points[0],top_theta[0].points[2]);
+      newTriangle1 = Triangle({newEdgeAdd1,newEdgeSplit1,third}, top_theta[0].id);
+
+      newTriangle2 = Triangle({newEdgeAdd1,newEdgeSplit2,this->FindEdge(top_theta[0].points[1],top_theta[0].points[2])},dnTriangles);
+      dnTriangles++;
 
       //n++;
       //unsigned int i=1;
@@ -297,24 +343,33 @@ double AreaTriangle(const Point& p1, const Point& p2, const Point& p3){
       // Matrice di adiacenza con 0 e 1
       // Anzichè copiare e incollare, possiamo fare un metodo a parte
 
-      Triangle AdjTriangle=FindAdjacence(top_theta[0]);
+      Triangle AdjTriangle=FindAdjacence(top_theta[0], top_theta[0].edges[0]);
 
-      if(AdjTriangle.ID!=UINT_MAX){
+      if(AdjTriangle.id!=UINT_MAX){
           Triangle newTriangle3,newTriangle4;
-          // scorro per trovare il vertice opposto al lato
-          for(; AdjTriangle.points[i]==top_theta[0].points[0] || AdjTriangle.points[i]==top_theta[0].points[1]; i++);
+          Point opposite(AdjTriangle.Opposite(top_theta[0].edges[0])); // costruttore copia
+          // scorro per trovare il vertice opposto al lato, con il metodo
+          newEdgeAdd2 = Edge(opposite, medio, nEdges);
+          dnEdges++;
 
-          newEdge2 = Edge(AdjTriangle.points[i].id, medio.id);
-          newEdge2.length = sqrt(pow(abs(AdjTriangle.points[2].x-medio.x),2)+pow(abs(AdjTriangle.points[2].y-medio.y),2));
-          newTriangle3 = Triangle({medio,AdjTriangle.points[0],AdjTriangle.points[2]});
-          newTriangle3.ID = AdjTriangle.ID;
-          newTriangle4 = Triangle({medio,AdjTriangle.points[1],AdjTriangle.points[2]});
-          newTriangle4.ID = nTriangles; // Da incrementare
+          newTriangle3 = Triangle({newEdgeAdd2, newEdgeSplit1, FindEdge(opposite, top_theta[0].points[0])}, AdjTriangle.id);
+
+          newTriangle4 = Triangle({newEdgeAdd2, newEdgeSplit2, FindEdge(opposite, top_theta[0].points[1])},dnTriangles);
+          dnTriangles++;
 
           }
-        top_theta.erase(top_theta.begin()); // elimino il primo triangolo
+        // elimino il primo triangolo
+        top_theta.erase(top_theta.begin());
+        n_theta--;
+        // elimino il secondo triangolo
+        if(this->Extract(AdjTriangle.id, top_theta)) n_theta--;
+
+        // modificare la matrice di adj e aggiungere i nuovi triangoli sia in mesh che in adj
+        // sostituire i nuovi ai vecchi
 
     }
+
+  // implementare ExportMesh
 
 
 }
