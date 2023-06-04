@@ -72,7 +72,7 @@ namespace ProjectLibrary
   bool Mesh::ImportCell0D(const string &cell0D)
   {
     ifstream file;
-    file.open("./../Project/Dataset/Test1/"+cell0D); if(file.fail()){return false;}
+    file.open("./../Project/Dataset/Test2/"+cell0D); if(file.fail()){return false;}
 
     list<string> listLines;
     string line;
@@ -96,7 +96,7 @@ namespace ProjectLibrary
   bool Mesh::ImportCell1D(const string &cell1D)
   {
     ifstream file;
-    file.open("./../Project/Dataset/Test1/"+cell1D); if(file.fail()){return false;}
+    file.open("./../Project/Dataset/Test2/"+cell1D); if(file.fail()){return false;}
 
     list<string> listLines;
     string line;
@@ -123,7 +123,7 @@ namespace ProjectLibrary
   bool Mesh::ImportCell2D(const string &cell2D)
   {
     ifstream file;
-    file.open("./../Project/Dataset/Test1/"+cell2D); if(file.fail()){return false;}
+    file.open("./../Project/Dataset/Test2/"+cell2D); if(file.fail()){return false;}
 
     list<string> listLines;
     string line;
@@ -156,19 +156,19 @@ namespace ProjectLibrary
 
   void Mesh::ExportMesh(){
     ofstream file;
-    string cell0D = "./../Project/Dataset/Test1Completed/new_cell0D.csv";
+    string cell0D = "./../Project/Dataset/Test2Completed/new_cell0D.csv";
     file.open(cell0D);
     if(file.fail()){cerr<<"Error in import file"<<endl;} else{ExportCell0D(file);} file.close();
-    string cell1D = "./../Project/Dataset/Test1Completed/new_cell1D.csv";
+    string cell1D = "./../Project/Dataset/Test2Completed/new_cell1D.csv";
     file.open(cell1D);
     if(file.fail()){cerr<<"Error in import file"<<endl;} else{ExportCell1D(file);} file.close();
-    string cell2D = "./../Project/Dataset/Test1Completed/new_cell2D.csv";
+    string cell2D = "./../Project/Dataset/Test2Completed/new_cell2D.csv";
     file.open(cell2D);
     if(file.fail()){cerr<<"Error in import file"<<endl;} else{ExportCell2D(file);} file.close();
   }
-  void Mesh::ExportCell0D(ostream& out){for(unsigned int i=0; i<nPoints; i++) {out<<points[i]<<endl;}}
-  void Mesh::ExportCell1D(ostream& out){for(unsigned int i=0; i<nEdges; i++) {out<<edges[i]<<endl;}}
-  void Mesh::ExportCell2D(ostream& out){for(unsigned int i=0; i<nTriangles; i++) {out<<triangles[i]<<endl;}}
+  void Mesh::ExportCell0D(ostream& out){out<<"Id x y"<<endl;for(unsigned int i=0; i<nPoints; i++) {out<<points[i]<<endl;}}
+  void Mesh::ExportCell1D(ostream& out){out<<"Id punto1 punto2"<<endl;for(unsigned int i=0; i<nEdges; i++) {out<<edges[i]<<endl;}}
+  void Mesh::ExportCell2D(ostream& out){out<<"Id punto1 punto2 punto3 lato1 lato2 lato3"<<endl;for(unsigned int i=0; i<nTriangles; i++) {out<<triangles[i]<<endl;}}
 
   Point Mesh::FindPoint(unsigned int &id_p){
     Point tmp{points[id_p]};
@@ -181,6 +181,52 @@ namespace ProjectLibrary
   Edge Mesh::FindEdge(unsigned int &id_e){
     Edge tmp{edges[id_e]};
     return tmp;
+  }
+  void Mesh::AddPoint(Point &point, unsigned int indice=UINT_MAX){
+      if(indice>=points.size())
+          points.push_back(point);
+      else
+          points[indice]=point;     // (indice, points.begin());
+  }
+  void Mesh::AddEdge(Edge &edge, unsigned int indice=UINT_MAX){
+      if(indice>=edges.size())
+          edges.push_back(edge);
+      else
+          edges[indice]=edge;
+  }
+  void Mesh::AddTriangle(Triangle &triangle, unsigned int indice=UINT_MAX){
+      if(indice>=triangles.size())
+          triangles.push_back(triangle);
+      else
+          triangles[indice]=triangle;
+  }
+  void Mesh::AddRow(vector<unsigned int> &cols, unsigned int row_ind=UINT_MAX){
+
+        if(row_ind>=adjacent.rows()){
+            adjacent.resize(adjacent.rows()+1, adjacent.cols());
+            adjacent(adjacent.rows(),col[0])=1;
+            if(cols.size()>1)
+                adjacent(adjacent.rows(),col[1])=1;
+        }
+        else{
+            adjacent.setZero(row_ind);
+            adjacent(row_ind,col[0])=1;
+            if(cols.size()>1)
+                adjacent(row_ind,col[1])=1;
+        }
+  }
+  void Mesh::AddCol(unsigned int &row1, unsigned int &row2, unsigned int &row3, unsigned int col_ind=UINT_MAX){
+      if(col_ind>=adjacent.cols()){
+          adjacent.resize(adjacent.rows(), adjacent.cols()+1);
+          adjacent(row1,adjacent.cols())=1;
+          adjacent(row2,adjacent.cols())=1;
+
+      }
+      else{
+          adjacent.setZero(all, col_ind);   // da testare setZero
+          adjacent(row1,col_ind)=1;
+          adjacent(row2,col_ind)=1;
+      }
   }
 
   Triangle Mesh::FindAdjacence(Triangle &T, Edge &E){
@@ -195,7 +241,7 @@ namespace ProjectLibrary
     // creo la matrice e la riempo gradualmente
     this->adjacent = MatrixXi::Zero(nEdges, nTriangles);
 
-    for(unsigned int i=0;i<nEdges;i++)
+    for(unsigned int i=0;i<nEdges;i++)   // si può riempire per triangoli
       for(unsigned int j=0;j<nTriangles;j++)
         this->adjacent(i,j)=IsAdjacent(triangles[j],edges[i]);
       //per ogni lato di ogni triangolo, scorrere tutti i lati di tutti i triangoli
@@ -224,10 +270,10 @@ namespace ProjectLibrary
     newEdgeSplit1 = Edge(top_theta[0].points[0],medio,top_theta[0].edges[0].id);  //riutilizzo l'id del lato cancellato
     newEdgeSplit2 = Edge(top_theta[0].points[1],medio,dnEdges);
     dnEdges++;
-    Edge third = FindEdge(top_theta[0].points[0],top_theta[0].points[2]);
+    //Edge third = FindEdge(top_theta[0].points[0],top_theta[0].points[2]);
     //NB se sotto funziona senza this-> e senza instanziare third possiamo farlo anche qui
-    newTriangle1 = Triangle({newEdgeAdd1,newEdgeSplit1,third}, top_theta[0].id);  //riutilizzo l'id del triangolo cancellato
-    newTriangle2 = Triangle({newEdgeAdd1,newEdgeSplit2,this->FindEdge(top_theta[0].points[1],top_theta[0].points[2])},dnTriangles);
+    newTriangle1 = Triangle({newEdgeAdd1,newEdgeSplit1,FindEdge(top_theta[0].points[0],top_theta[0].points[2])}, top_theta[0].id);  //riutilizzo l'id del triangolo cancellato
+    newTriangle2 = Triangle({newEdgeAdd1,newEdgeSplit2,FindEdge(top_theta[0].points[1],top_theta[0].points[2])},dnTriangles);
     dnTriangles++;
 
   // Matrice di adiacenza con 0 e 1
@@ -244,7 +290,7 @@ namespace ProjectLibrary
 
       newTriangle3 = Triangle({newEdgeAdd2, newEdgeSplit1, FindEdge(opposite, top_theta[0].points[0])}, AdjTriangle.id);  //riutilizzo l'id del triangolo cancellato
       newTriangle4 = Triangle({newEdgeAdd2, newEdgeSplit2, FindEdge(opposite, top_theta[0].points[1])},dnTriangles);
-      dnTriangles++;
+      dnTriangles++;           
     }
     // elimino il primo triangolo
     top_theta.erase(top_theta.begin());
@@ -253,6 +299,31 @@ namespace ProjectLibrary
     if(this->Extract(AdjTriangle.id, top_theta)) n_theta--;  //si può scrivere nell'if sopra
 
     // modificare la matrice di adj e aggiungere i nuovi triangoli sia in mesh che in adj
+    // sostituzione dei pt, lati e triangoli
+    this->AddPoint(medio);
+    nPoints=dnPoints;
+
+    this->AddEdge(newEdgeAdd1);
+    this->AddEdge(newEdgeSplit2);
+    this->AddEdge(newEdgeSplit1, newEdgeSplit1.id);
+    if(AdjTriangle.id!=UINT_MAX)
+        this->AddEdge(newEdgeAdd2);
+    nEdges=dnEdges;
+
+    this->AddTriangle(newTriangle2);
+    this->AddTriangle(newTriangle1, newTriangle1.id);
+    this->AddTriangle(newTriangle3, newTriangle3.id);
+    if(AdjTriangle.id!=UINT_MAX)
+        this->AddTriangle(newTriangle4);
+    nTriangles=dnTriangles;
+
+    //modifica della matrice adj
+    //this->adjacent.resize(nEdges,nTriangles);  // spostato in AddRow e AddCol
+
+    AddRow({newTriangle1.id, newTriangle2.id});
+
+    AddCol();
+
     // sostituire i nuovi ai vecchi
 
     }

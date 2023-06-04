@@ -119,11 +119,13 @@ namespace ProjectLibrary
   inline ostream& operator<<(ostream& os, const Triangle& T)
   {
     os<<T.id;
-    for(unsigned int i=0;i<T.points.size();i++)
+
+    for(unsigned int i=0;i<3;i++)   // si può usare T.points.size()
       os<<" "<<T.points[i].id;
-    for(unsigned int i=0;i<T.edges.size();i++)
+    for(unsigned int i=0;i<3;i++)   // si può usare T.edges.size()
       os<<" "<<T.edges[i].id;
     return os;
+
   }
   inline bool operator==(const Triangle& T1, const Triangle& T2){return T1.id == T2.id;}
 
@@ -152,12 +154,14 @@ namespace ProjectLibrary
       Mesh(const string &cell0D, const string &cell1D, const string &cell2D);
       void Refining(double &theta);
       void AdjacenceMatrix();
-      void AddPoint(Point &point);
-      void AddEdge(Edge &edge);
-      void AddTriangle(Triangle &triangle);
+      void AddPoint(Point &point, unsigned int indice=UINT_MAX);
+      void AddEdge(Edge &edge, unsigned int indice=UINT_MAX);
+      void AddTriangle(Triangle &triangle, unsigned int indice=UINT_MAX);
       Edge FindEdge(Point &p1, Point &p2);
       Edge FindEdge(unsigned int &id_e);
       Point FindPoint(unsigned int &id_p);
+      void AddRow(vector<unsigned int> &cols, unsigned int row_ind=UINT_MAX);
+      void AddCol(unsigned int &row1, unsigned int &row2, unsigned int &row3, unsigned int col_ind=UINT_MAX);
       void ExportMesh();
 
   private:
@@ -173,6 +177,7 @@ namespace ProjectLibrary
 
       bool IsAdjacent(Triangle &T,Edge &E){ return T.Includes(E); }
       Triangle FindAdjacence(Triangle &T, Edge &E);
+
   };
 
 

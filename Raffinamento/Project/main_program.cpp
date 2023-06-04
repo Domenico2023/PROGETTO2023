@@ -44,6 +44,7 @@ int main(int argc, char *argv[])
 //  }
 
 //  M.AdjacenceMatrix();  //l'ho inserito nel costruttore della Mesh, così la calcola in automatico
+
   M.Refining(theta);
 
 }
