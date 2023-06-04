@@ -25,14 +25,15 @@ namespace ProjectLibrary
     Point(const double& x, const double& y, const unsigned int& id): x(x), y(y), id(id) {}
     Point(const Point& p): x(p.x), y(p.y), id(p.id) {}
     Point& operator=(const Point &p){
-            x = p.x;
-            y = p.y;
-            id = p.id;
-            return *this;
-        }
+      x = p.x;
+      y = p.y;
+      id = p.id;
+      return *this;
+    }
   };
 
   inline double normSquared(const double& x, const double& y) {return x * x + y * y;}
+  bool UpperLine(const Point& p1, const Point& p2, const Point& p3);
 
   inline bool operator==(const Point& p1, const Point& p2)
   {return (normSquared(p1.x - p2.x, p1.y - p2.y) <= Point::geometricTol * Point::geometricTol * max(normSquared(p1.x, p1.y), normSquared(p2.x, p2.y)));}
@@ -41,54 +42,32 @@ namespace ProjectLibrary
   inline bool operator>(const Point& p1, const Point& p2){return p1.x > p2.x + Point::geometricTol * max(p1.x, p2.x);}
   inline bool operator<=(const Point& p1, const Point& p2){return !(p1 > p2);}
 
-
-  bool UpperLine(const Point& p1, const Point& p2, const Point& p3);
-
-//  struct Edge
-//  {
-//    unsigned int id1;
-//    unsigned int id2;
-//    double length;
-//    Edge() = default;
-//    Edge(unsigned int id1, unsigned int id2): id1(id1), id2(id2){}
-//  };
-//  inline bool operator==(const Edge& E1, const Edge& E2){return E1.id1 == E2.id1 && E1.id2 == E2.id2;}
-//  inline bool operator!=(const Edge& E1, const Edge& E2){return !(E1 == E2);}
-//  inline bool operator>(const Edge& E1, const Edge& E2){return E1.length > E2.length + Point::geometricTol * max(E1.length, E2.length);}
-//  inline bool operator<=(const Edge& E1, const Edge& E2){return !(E1 > E2);}
-//  //inline bool operator>=(const Edge& E1, const Edge& E2){return E1 > E2;}
-//  //inline bool operator<<(const Point& p, const Edge& E){return p.id==E.id1 || p.id==E.id2;}
-//  //inline bool operator>>(const Point& p, const Edge& E){return !(p<<E);}
-//  inline ostream& operator<<(ostream& os, const Edge& E1){os << E1.id1 << " " << E1.id2; return os;}
-
   struct Edge
-    {
-      Point p1;
-      Point p2;
-      unsigned int id;
-      double length;
-      Edge() = default;
-      Edge(Point &p1, Point &p2, unsigned int &id): p1(p1), p2(p2), id(id)
-      {
-        length = sqrt(pow(abs(this->p1.x-this->p2.x),2)+pow(abs(this->p1.y-this->p2.y),2));
-      }
-      Edge(const Edge &E):p1(E.p1), p2(E.p2), id(E.id), length(E.length){}
-      Edge& operator=(const Edge &E){
-              p1 = E.p1;
-              p2=E.p2;
-              id = E.id;
-              length=E.length;
-              return *this;
-          }
-  //    array<Point,2> FindPoints(unsigned int id_p1, unsigned int id_p2, vector<Point> &points);
-      bool Includes(const Point &p){return (p==p1 || p==p2);}
+  {
+    Point p1;
+    Point p2;
+    unsigned int id;
+    double length;
+    Edge() = default;
+    Edge(Point &p1, Point &p2, unsigned int &id): p1(p1), p2(p2), id(id)
+    {length = sqrt(pow(abs(this->p1.x-this->p2.x),2)+pow(abs(this->p1.y-this->p2.y),2));}
+    Edge(const Edge &E):p1(E.p1), p2(E.p2), id(E.id), length(E.length){}
+    Edge& operator=(const Edge &E){
+      p1 = E.p1;
+      p2=E.p2;
+      id = E.id;
+      length=E.length;
+      return *this;
+    }
+    bool Includes(const Point &p){return (p==p1 || p==p2);}
+    Point Medium(unsigned int id_p) {return Point((p1.x+p2.x)/2,(p1.y+p2.y)/2,id_p);}
 
-    };
-    inline bool operator==(const Edge& E1, const Edge& E2){return E1.id == E2.id;}
-    inline bool operator!=(const Edge& E1, const Edge& E2){return !(E1 == E2);}
-    inline bool operator>(const Edge& E1, const Edge& E2){return E1.length > E2.length + Point::geometricTol * max(E1.length, E2.length);}
-    inline bool operator<=(const Edge& E1, const Edge& E2){return !(E1 > E2);}
-    inline ostream& operator<<(ostream& os, const Edge& E){os<<E.id<<" "<<E.p1.id<<" "<<E.p2.id; return os;}
+  };
+  inline bool operator==(const Edge& E1, const Edge& E2){return E1.id == E2.id;}
+  inline bool operator!=(const Edge& E1, const Edge& E2){return !(E1 == E2);}
+  inline bool operator>(const Edge& E1, const Edge& E2){return E1.length > E2.length + Point::geometricTol * max(E1.length, E2.length);}
+  inline bool operator<=(const Edge& E1, const Edge& E2){return !(E1 > E2);}
+  inline ostream& operator<<(ostream& os, const Edge& E){os<<E.id<<" "<<E.p1.id<<" "<<E.p2.id; return os;}
 
 
   struct Triangle
@@ -116,26 +95,15 @@ namespace ProjectLibrary
   inline bool operator>(const Triangle& T1, const Triangle& T2){return T1.area > T2.area + Point::geometricTol_Squared * max(T1.area, T2.area);}
   inline bool operator<=(const Triangle& T1, const Triangle& T2){return !(T1 > T2);}
   //inline bool operator>=(const Triangle& T1, const Triangle& T2){return T1 > T2;}
-  inline ostream& operator<<(ostream& os, const Triangle& T)
-  {
+  inline ostream& operator<<(ostream& os, const Triangle& T){
     os<<T.id;
-
-    for(unsigned int i=0;i<3;i++)   // si può usare T.points.size()
+    for(unsigned int i=0;i<3;i++)   // si può usare T.points.size()  OPPURE UN FOR-EACH
       os<<" "<<T.points[i].id;
     for(unsigned int i=0;i<3;i++)   // si può usare T.edges.size()
       os<<" "<<T.edges[i].id;
     return os;
-
   }
   inline bool operator==(const Triangle& T1, const Triangle& T2){return T1.id == T2.id;}
-
-  //inline bool operator<<(const Edge& E,const Triangle& T){ // Appartiene
-          //return E==T.edges[0] || E==T.edges[1] || E==T.edges[2];
-      //}
-
-  //inline bool operator>>(const Edge& E,const Triangle& T){return !(E<<T);} // Non Appartiene
-
-
 
   class Mesh
   {
@@ -146,7 +114,9 @@ namespace ProjectLibrary
       vector<Edge> edges;
       unsigned int nTriangles=0;
       vector<Triangle> triangles;
-      MatrixXi adjacent;
+//      MatrixXi adjacent;
+      vector<vector<unsigned int>> adjacent;
+      vector<Triangle> top_theta; //si può ottimizzare salvando solo gli id
 
     public:
       Mesh() = default;
@@ -160,8 +130,10 @@ namespace ProjectLibrary
       Edge FindEdge(Point &p1, Point &p2);
       Edge FindEdge(unsigned int &id_e);
       Point FindPoint(unsigned int &id_p);
-      void AddRow(vector<unsigned int> &cols, unsigned int row_ind=UINT_MAX);
-      void AddCol(unsigned int &row1, unsigned int &row2, unsigned int &row3, unsigned int col_ind=UINT_MAX);
+//      void AddRow(vector<unsigned int> &cols, unsigned int row_ind=UINT_MAX);
+      void InsertRow(const vector<unsigned int> &t, unsigned int id_edge=UINT_MAX);
+//      void AddCol(unsigned int &row1, unsigned int &row2, unsigned int &row3, unsigned int col_ind=UINT_MAX);
+      void AddCol(unsigned int &id_tr, unsigned int &id_edge);
       void ExportMesh();
 
   private:
@@ -174,6 +146,7 @@ namespace ProjectLibrary
       void DivideTriangle_base(vector<Triangle> &top_theta, unsigned int &n_theta);
       void DivideTriangle_advanced(vector<Triangle> &top_theta, unsigned int &n_theta);
       bool Extract(unsigned int &id, vector<Triangle> &top_theta); // si può mettere top_theta come attributo
+      unsigned int TopTheta(double &theta);
 
       bool IsAdjacent(Triangle &T,Edge &E){ return T.Includes(E); }
       Triangle FindAdjacence(Triangle &T, Edge &E);
