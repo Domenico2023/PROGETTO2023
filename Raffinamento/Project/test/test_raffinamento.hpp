@@ -2,12 +2,17 @@
 #define __TEST_RAFFINAMENTO_H
 
 #include <gtest/gtest.h>
+#include <iostream>
+#include "Eigen/Eigen"
 
 #include "mesh_classes.hpp"
+//#include "mesh_classes.cpp"
 #include "sorting.hpp"
 
-//using namespace testing;
-//using namespace ProjectLibrary;
+using namespace testing;
+using namespace std;
+using namespace Eigen;
+using namespace ProjectLibrary;
 using namespace SortLibrary;
 
 TEST(TestSorting, TestMergeSort)

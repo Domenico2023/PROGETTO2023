@@ -76,7 +76,7 @@ namespace ProjectLibrary
 
     list<string> listLines;
     string line;
-    while(getline(file, line)) listLines.push_back(line); file.close();
+    while(getline(file, line)) {listLines.push_back(line);} file.close();
 
     listLines.pop_front();
     nPoints = listLines.size();
@@ -100,7 +100,7 @@ namespace ProjectLibrary
 
     list<string> listLines;
     string line;
-    while(getline(file, line)) listLines.push_back(line); file.close();
+    while(getline(file, line)) {listLines.push_back(line);} file.close();
 
     listLines.pop_front();
     nEdges = listLines.size();
@@ -127,7 +127,7 @@ namespace ProjectLibrary
 
     list<string> listLines;
     string line;
-    while(getline(file, line)) listLines.push_back(line); file.close();
+    while(getline(file, line)) {listLines.push_back(line);} file.close();
 
     listLines.pop_front();
     nTriangles = listLines.size();
