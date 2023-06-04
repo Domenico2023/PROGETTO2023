@@ -18,7 +18,7 @@ using namespace std;
 using namespace ProjectLibrary;
 
 
-int main(int argc, char *argv[])
+int main()//int argc, char *argv[])
 {
   Mesh M("Cell0Ds.csv","Cell1Ds.csv","Cell2Ds.csv");
   double theta = 0.2;
@@ -46,6 +46,6 @@ int main(int argc, char *argv[])
 //  M.AdjacenceMatrix();  //l'ho inserito nel costruttore della Mesh, così la calcola in automatico
 
   M.Refining(theta);
-//  M.ExportMesh();
+  M.ExportMesh();
   return 0;
 }

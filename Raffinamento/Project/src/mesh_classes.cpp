@@ -30,7 +30,7 @@ namespace ProjectLibrary
     else pts[2]=edges[1].p1;
     return pts;
   }
-  Triangle::Triangle(vector<Edge> edges, unsigned int &id): edges(edges), id(id){
+  Triangle::Triangle(vector<Edge> edges, unsigned int id): edges(edges), id(id){
     MSort(edges);  // di default in ordine decrescente
     points=EdgesToPoints();
 
@@ -63,13 +63,13 @@ namespace ProjectLibrary
     }                           // per costruzione di edges e points ce lo abbiamo gratis
   }
 
-  Mesh::Mesh(const string &cell0D, const string &cell1D, const string &cell2D){
+  Mesh::Mesh(const string cell0D, const string cell1D, const string cell2D){
     if(!ImportCell0D(cell0D)){cerr<<"Error in import file"<<endl;}
     if(!ImportCell1D(cell1D)){cerr<<"Error in import file"<<endl;}
     if(!ImportCell2D(cell2D)){cerr<<"Error in import file"<<endl;}
     this->AdjacenceMatrix();
   }
-  bool Mesh::ImportCell0D(const string &cell0D)
+  bool Mesh::ImportCell0D(const string cell0D)
   {
     ifstream file;
     file.open("./../Project/Dataset/Test2/"+cell0D); if(file.fail()){return false;}
@@ -93,7 +93,7 @@ namespace ProjectLibrary
     }
     return true;
   }
-  bool Mesh::ImportCell1D(const string &cell1D)
+  bool Mesh::ImportCell1D(const string cell1D)
   {
     ifstream file;
     file.open("./../Project/Dataset/Test2/"+cell1D); if(file.fail()){return false;}
@@ -120,7 +120,7 @@ namespace ProjectLibrary
     }
     return true;
   }
-  bool Mesh::ImportCell2D(const string &cell2D)
+  bool Mesh::ImportCell2D(const string cell2D)
   {
     ifstream file;
     file.open("./../Project/Dataset/Test2/"+cell2D); if(file.fail()){return false;}
@@ -170,7 +170,7 @@ namespace ProjectLibrary
   void Mesh::ExportCell1D(ostream& out){out<<"Id punto1 punto2"<<endl;for(unsigned int i=0; i<nEdges; i++) {out<<edges[i]<<endl;}}
   void Mesh::ExportCell2D(ostream& out){out<<"Id punto1 punto2 punto3 lato1 lato2 lato3"<<endl;for(unsigned int i=0; i<nTriangles; i++) {out<<triangles[i]<<endl;}}
 
-  Point Mesh::FindPoint(unsigned int &id_p){
+  Point Mesh::FindPoint(unsigned int id_p){
     Point tmp{points[id_p]};
     return tmp;
   }
@@ -178,23 +178,23 @@ namespace ProjectLibrary
     auto e1 = find_if(edges.begin(), edges.end(), [p1,p2](Edge edg){return (edg.Includes(p1) && edg.Includes(p2));});
     return edges[distance(edges.begin(),e1)];
   }
-  Edge Mesh::FindEdge(unsigned int &id_e){
+  Edge Mesh::FindEdge(unsigned int id_e){
     Edge tmp{edges[id_e]};
     return tmp;
   }
-  void Mesh::AddPoint(Point &point, unsigned int indice){
+  void Mesh::AddPoint(Point point, unsigned int indice){
       if(indice>=points.size())
           points.push_back(point);
       else
           points[indice]=point;     // (indice, points.begin());
   }
-  void Mesh::AddEdge(Edge &edge, unsigned int indice){
+  void Mesh::AddEdge(Edge edge, unsigned int indice){
       if(indice>=edges.size())
           edges.push_back(edge);
       else
           edges[indice]=edge;
   }
-  void Mesh::AddTriangle(Triangle &triangle, unsigned int indice){
+  void Mesh::AddTriangle(Triangle triangle, unsigned int indice){
       if(indice>=triangles.size())
           triangles.push_back(triangle);
       else
@@ -233,18 +233,26 @@ namespace ProjectLibrary
 //  }
 
   void Mesh::InsertRow(const vector<unsigned int> &t, unsigned int id_edge){
-    if(id_edge>adjacent.size())
+    if(id_edge>=adjacent.size())
       adjacent.push_back(t);
     else{
       adjacent[id_edge].resize(t.size());
       adjacent[id_edge] = t;
     }
   }
-  void Mesh::AddCol(unsigned int &id_tr, unsigned int &id_edge){
+  void Mesh::ModifyRow(unsigned int id_t_old, unsigned int id_t_new, unsigned int id_edge){
+    if(adjacent[id_edge][0]==id_t_old)
+      adjacent[id_edge][0]=id_t_new;
+    else if(adjacent[id_edge].size()>1)
+      adjacent[id_edge][1]=id_t_new;
+    else
+    {cerr<<"Error: impossible to save triangle id in adjacent matrix"<<endl; throw(1);}
+  }
+  void Mesh::AddCol(unsigned int id_tr, unsigned int id_edge){
     adjacent[id_edge].push_back(id_tr);
   }
 
-  Triangle Mesh::FindAdjacence(Triangle &T, Edge &E){
+  Triangle Mesh::FindAdjacence(Triangle &T, Edge E){
       //restituisce (se c'è) il triangolo adiacente al lato E diverso da T
 //    for(unsigned int j=0;j<nTriangles;j++)
 //      if(adjacent(E.id,j) && j!=T.id)
@@ -276,7 +284,7 @@ namespace ProjectLibrary
       for(Edge &e : t.edges)
         adjacent[e.id].push_back(t.id);
   }
-  bool Mesh::Extract(unsigned int &id, vector<Triangle> &top_theta){
+  bool Mesh::Extract(unsigned int id){
       //estrae il triangolo con id=id dalla lista
     for(unsigned int i=0; i<top_theta.size(); i++){
       if (id==top_theta[i].id){
@@ -286,15 +294,16 @@ namespace ProjectLibrary
     }
     return false;
   }
-  unsigned int Mesh::TopTheta(double &theta){
+  unsigned int Mesh::TopTheta(double theta){
       //estrae i primi n_theta triangoli ordinati per area
     vector<Triangle> sorted_vec = triangles;
     MSort(sorted_vec);
     unsigned int n_theta = round(theta*nTriangles);
+    top_theta.resize(n_theta);
     top_theta = {sorted_vec.begin(), sorted_vec.begin()+n_theta};
     return n_theta;
   }
-  void Mesh::DivideTriangle_base(vector<Triangle> &top_theta, unsigned int &n_theta){
+  void Mesh::DivideTriangle_base(unsigned int &n_theta){
     Point medio;
     Edge newEdgeAdd1,newEdgeSplit1, newEdgeSplit2;
     Edge newEdgeAdd2;
@@ -302,7 +311,7 @@ namespace ProjectLibrary
     Triangle newTriangle3,newTriangle4;
     unsigned int dnTriangles=nTriangles, dnEdges=nEdges, dnPoints=nPoints;
 
-//    medio = Point((top_theta[0].points[0].x+top_theta[0].points[1].x)/2,(top_theta[0].points[0].y+top_theta[0].points[1].y)/2,dnPoints+1);
+//    medio = Point((top_theta[0].points[0].x+top_theta[0].points[1].x)*0.5,(top_theta[0].points[0].y+top_theta[0].points[1].y)*0.5,dnPoints+1);
     medio = top_theta[0].edges[0].Medium(dnPoints+1);  //ho inserito un metodo per il punto medio del lato
     dnPoints++;
     AddPoint(medio);  //meglio aggiungerlo prima perché va inserito senza succ e prec
@@ -320,7 +329,7 @@ namespace ProjectLibrary
   // Matrice di adiacenza con 0 e 1
   // Anzichè copiare e incollare, possiamo fare un metodo a parte
 
-    Triangle AdjTriangle=FindAdjacence(top_theta[0], top_theta[0].edges[0]);
+    Triangle AdjTriangle=FindAdjacence(top_theta[0], top_theta[0].edges[0]);  //N.B. Non trova il triangolo giusto
 
     if(AdjTriangle.id!=UINT_MAX){
       // scorro per trovare il vertice opposto al lato, con il metodo
@@ -336,7 +345,7 @@ namespace ProjectLibrary
     top_theta.erase(top_theta.begin());
     n_theta--;
     // elimino il secondo triangolo
-    if(Extract(AdjTriangle.id, top_theta)) n_theta--;  //si può scrivere nell'if sopra
+    if(Extract(AdjTriangle.id)) n_theta--;  //si può scrivere nell'if sopra
 
     // modificare la matrice di adj e aggiungere i nuovi triangoli sia in mesh che in adj
     // sostituzione dei pt, lati e triangoli
@@ -360,16 +369,34 @@ namespace ProjectLibrary
     //modifica della matrice adj   SI PUò FARE ALL'INIZIO (meglio per la versione advanced)
     //this->adjacent.resize(nEdges,nTriangles);  // spostato in AddRow e AddCol --> IN REALTà ORA è UN vector di vector, NON PIù MATRICE
 
+//    Edge tmp_e = newTriangle1.PointsToEdge(top_theta[0].points[0],top_theta[0].points[2]);  //DA CONTROLLARE: MEGLIO PointsToEdge come efficienza
+    Edge tmp_e = FindEdge(top_theta[0].points[0],top_theta[0].points[2]);
+    ModifyRow(top_theta[0].id,newTriangle1.id,tmp_e.id);
+//    tmp_e = newTriangle2.PointsToEdge(top_theta[0].points[1],top_theta[0].points[2]);
+    tmp_e = FindEdge(top_theta[0].points[1],top_theta[0].points[2]);
+    ModifyRow(top_theta[0].id,newTriangle2.id,tmp_e.id);
+//    Edge tmp_e = newTriangle1.PointsToEdge(top_theta[0].points[0],top_theta[0].points[2]);
+//    InsertRow({newTriangle1.id, (FindAdjacence(top_theta[0], tmp_e)).id},tmp_e.id);
+//    tmp_e = newTriangle2.PointsToEdge(top_theta[0].points[1],top_theta[0].points[2]);
+//    InsertRow({newTriangle2.id, (FindAdjacence(top_theta[0], tmp_e)).id},tmp_e.id);
+
     InsertRow({newTriangle1.id, newTriangle2.id},newEdgeAdd1.id);
     InsertRow({newTriangle1.id},newEdgeSplit1.id);
     InsertRow({newTriangle2.id},newEdgeSplit2.id);
     if(AdjTriangle.id!=UINT_MAX){
-      InsertRow({newTriangle1.id, newTriangle2.id},newEdgeAdd1.id);
+//      tmp_e = newTriangle3.PointsToEdge(top_theta[0].points[0],AdjTriangle.Opposite(top_theta[0].edges[0]));
+      Point opposite(AdjTriangle.Opposite(top_theta[0].edges[0])); // costruttore copia
+      tmp_e = FindEdge(top_theta[0].points[0],opposite);
+      ModifyRow(AdjTriangle.id,newTriangle3.id,tmp_e.id);
+//      tmp_e = newTriangle4.PointsToEdge(top_theta[0].points[1],AdjTriangle.Opposite(top_theta[0].edges[0]));
+      tmp_e = FindEdge(top_theta[0].points[1],opposite);
+      ModifyRow(AdjTriangle.id,newTriangle4.id,tmp_e.id);
+      InsertRow({newTriangle3.id, newTriangle4.id},newEdgeAdd2.id);
       AddCol(newTriangle3.id,newEdgeSplit1.id);
       AddCol(newTriangle4.id,newEdgeSplit2.id);
     }
   }
-  void Mesh::Refining(double &theta){
+  void Mesh::Refining(double theta){
     // generazione del vettore di triangoli ordinato per area e vettore dei primi n_theta elementi
 //    vector<Triangle> top_theta, sorted_vec = triangles;
 //    MSort(sorted_vec);
@@ -378,7 +405,7 @@ namespace ProjectLibrary
     unsigned int n_theta = TopTheta(theta);  //ho spostato tutto il blocco precedente in una funzione
     // per ogni triangolo in top_theta:  dividi_triangolo (e ricalcola adiacenze)
     while(n_theta > 0)
-      DivideTriangle_base(top_theta, n_theta);
+      DivideTriangle_base(n_theta);
   }
 
 }
