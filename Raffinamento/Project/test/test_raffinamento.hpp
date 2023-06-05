@@ -31,6 +31,12 @@ TEST(TestSorting, TestMergeSortDec)
   EXPECT_EQ(v, sortedV);
 }
     //TEST EDGE
+TEST(TestEdge, TestCostructor)
+{
+  unsigned int x1, y1;
+  x1 = 1; y1 = 0;
+  EXPECT_ANY_THROW(Edge(Point(x1,y1,0),Point(x1,y1,1),0));
+}
 TEST(TestEdge, TestMedium)
 {
   unsigned int x1, y1, id1, x2, y2, id2;
@@ -56,11 +62,17 @@ TEST(TestEdge, TestIncludes)
   EXPECT_EQ(edge.Includes(Point(x1,y1,id2)),true);
 }
     //TEST TRIANGLE
-TEST(TestTriangle, TestEqual)
+TEST(TestTriangle, TestEqualTrue)
 {
   Edge edge1T1(Point(0,0,0),Point(1,1,1),0), edge2T1(Point(2,2,2),Point(1,1,1),1), edge3T1(Point(2,2,2),Point(0,0,0),2);
   Edge edge1T2(Point(2,2,2),Point(1,1,1),1), edge2T2(Point(0,0,0),Point(1,1,1),0), edge3T2(Point(2,2,2),Point(0,0,0),2);
   EXPECT_EQ(Triangle({edge1T1,edge2T1,edge3T1},0), Triangle({edge1T2,edge2T2,edge3T2},1));
+}
+TEST(TestTriangle, TestEqualFalse)
+{
+  Edge edge1T1(Point(0,0,0),Point(1,1,1),0), edge2T1(Point(2,2,2),Point(1,1,1),1), edge3T1(Point(2,2,2),Point(0,0,0),2);
+  Edge edgetmp1(Point(1,1,1),Point(5,5,5),5), edgetmp2(Point(0,0,0),Point(5,5,5),6);
+  EXPECT_NE(Triangle({edge1T1,edge2T1,edge3T1},0), Triangle({edge1T1,edgetmp1,edgetmp2},1));
 }
 TEST(TestTriangle, TestIncludesTrue)
 {
@@ -82,13 +94,29 @@ TEST(TestTriangle, TestOppositeError)
   Edge edge1(Point(0,0,0),Point(1,1,1),0), edge2(Point(2,2,2),Point(1,1,1),1), edge3(Point(2,2,2),Point(0,0,0),2);
   EXPECT_ANY_THROW(Triangle({edge1,edge2,edge3},0).Opposite(Edge(Point(2,2,2),Point(5,5,5),0)));
 }
-TEST(TestTriangle, TestEdgesToPoints)
+TEST(TestTriangle, TestEdgesToPointsTrue)
 {
   Edge edge1(Point(0,0,0),Point(1,1,1),0), edge2(Point(2,2,2),Point(1,1,1),1), edge3(Point(2,2,2),Point(0,0,0),2);
   Triangle T;
   T.edges={edge1,edge2,edge3};
   array<Point,3> expected_points{Point(0,0,0),Point(1,1,1),Point(2,2,2)};
   EXPECT_EQ(T.EdgesToPoints(),expected_points);
+}
+TEST(TestTriangle, TestEdgesToPointsFalse1)
+{
+    //lati inconsistenti, non chiudono il triangolo
+  Edge edge1(Point(0,0,0),Point(1,1,1),0), edge2(Point(2,2,2),Point(1,1,1),1), edge3(Point(2,2,2),Point(5,5,5),2);
+  Triangle T;
+  T.edges={edge1,edge2,edge3};
+  EXPECT_ANY_THROW(T.EdgesToPoints());
+}
+TEST(TestTriangle, TestEdgesToPointsFalse2)
+{
+    //due lati uguali
+  Edge edge1(Point(0,0,0),Point(1,1,1),0), edge2(Point(2,2,2),Point(1,1,1),1), edge3(Point(1,1,1),Point(2,2,2),2);
+  Triangle T;
+  T.edges={edge1,edge2,edge3};
+  EXPECT_ANY_THROW(T.EdgesToPoints());
 }
 TEST(TestTriangle, TestPointsToEdgeTrue)
 {

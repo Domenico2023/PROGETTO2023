@@ -21,16 +21,31 @@ namespace ProjectLibrary
     return 0.5*M.determinant();
 }
 
-  array<Point, 3> Triangle::EdgesToPoints(){
-    array<Point, 3> pts;
-    pts[0]=edges[0].p1;
-    pts[1]=edges[0].p2;
+//  array<Point, 3> Triangle::EdgesToPoints(){
+//    array<Point, 3> pts;
+//    pts[0]=edges[0].p1;
+//    pts[1]=edges[0].p2;
 
-    if(edges[0].Includes(edges[1].p1)) pts[2]=edges[1].p2;
-    else pts[2]=edges[1].p1;
-    return pts;
+//    if(edges[0].Includes(edges[1].p1)) pts[2]=edges[1].p2;
+//    else pts[2]=edges[1].p1;
+//    return pts;
+//  }
+  array<Point, 3> Triangle::EdgesToPoints(){
+    vector<Point> pts;
+    for(Edge &edge : edges){
+      if(find(pts.begin(),pts.end(),edge.p1)==pts.end())
+        pts.push_back(edge.p1);
+      if(find(pts.begin(),pts.end(),edge.p2)==pts.end())
+        pts.push_back(edge.p2);
+    }
+    if(pts.size()>3 || edges[0]==edges[1] || edges[0]==edges[2] || edges[1]==edges[2]){cerr<<"Error: inconsistent triangle"; throw(1);}
+    array<Point,3> arr;
+    for(unsigned int i=0;i<3;i++)
+      arr[i]=pts[i];
+    return arr;
   }
   Triangle::Triangle(vector<Edge> edges, unsigned int id): edges(edges), id(id){
+      //controllo consistenza (direttamente in EdgesToPoints
     MSort(edges);  // di default in ordine decrescente
     points=EdgesToPoints();
 

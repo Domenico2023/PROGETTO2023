@@ -49,8 +49,9 @@ namespace ProjectLibrary
     unsigned int id;
     double length;
     Edge() = default;
-    Edge(Point p1, Point p2, unsigned int id): p1(p1), p2(p2), id(id)
-    {length = sqrt(pow(abs(p1.x-p2.x),2)+pow(abs(p1.y-p2.y),2));}
+    Edge(Point p1, Point p2, unsigned int id): p1(p1), p2(p2), id(id){
+      if(p1==p2){cerr<<"Error: inconsistent edge"<<endl; throw(1);}
+      length = sqrt(pow(abs(p1.x-p2.x),2)+pow(abs(p1.y-p2.y),2));}
     Edge(const Edge &E):p1(E.p1), p2(E.p2), id(E.id), length(E.length){}
     Edge& operator=(const Edge &E){
       p1 = E.p1;
@@ -90,7 +91,9 @@ namespace ProjectLibrary
     }
     bool Includes(const Edge E){for(unsigned int i=0;i<3;i++) if(this->edges[i]==E) return true; return false;}
     Point Opposite(Edge E){if(!Includes(E)){cerr<<"Error: edge not included"<<endl;throw(1);};unsigned int i=0; while(E.Includes(points[i])) i++; return points[i];}
+    Edge MaxEdge(){return edges[0];}
     array<Point, 3> EdgesToPoints();
+//    array<Point, 3> IsConsistent();
     Edge PointsToEdge(Point p1, Point p2){
       for(Edge &edge : edges)
         if(edge.Includes(p1) && edge.Includes(p2))
@@ -116,17 +119,12 @@ namespace ProjectLibrary
     for(unsigned int i=0;i<3 && in;i++){
       in = false;
       for(unsigned int j=0;j<3 && !in;j++)
-        if(T1.points[i]==T2.points[j])
-          in = true;
-    }
-    for(unsigned int i=0;i<3 && in;i++){
-      in = false;
-      for(unsigned int j=0;j<3 && !in;j++)
         if(T1.edges[i]==T2.edges[j])
           in = true;
     }
       return in;
   }
+  inline bool operator!=(const Triangle T1, const Triangle T2){return !(T1==T2);}
 
   class Mesh
   {
