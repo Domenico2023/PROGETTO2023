@@ -15,6 +15,9 @@ using namespace Eigen;
 using namespace ProjectLibrary;
 using namespace SortLibrary;
 
+Mesh M("Cell0Ds.csv","Cell1Ds.csv","Cell2Ds.csv");
+
+
     //TEST SORTING
 TEST(TestSorting, TestMergeSortInc)
 {
@@ -153,10 +156,9 @@ TEST(TestTriangle, TestPointsToEdgeFalse)
   EXPECT_EQ(T.PointsToEdge(Point(1,1,1),Point(5,5,5)).id, UINT_MAX);
 }
     //TEST MESH
-//TEST(TestMesh, Test)
+//TEST(TestMesh, TestAdjacenceMatrix)
 //{
-//  Edge edge1(Point(0,0,0),Point(1,1,1),0), edge2(Point(2,2,2),Point(1,1,1),1), edge3(Point(2,2,2),Point(0,0,0),2);
-//  Triangle T({edge1,edge2,edge3},0);
+//  M.AdjacenceMatrix();
 //  EXPECT_EQ(T.PointsToEdge(Point(1,1,1),Point(5,5,5)).id, UINT_MAX);
 //}
 

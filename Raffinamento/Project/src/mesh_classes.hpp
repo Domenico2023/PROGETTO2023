@@ -157,6 +157,7 @@ namespace ProjectLibrary
 //      void AddCol(unsigned int &row1, unsigned int &row2, unsigned int &row3, unsigned int col_ind=UINT_MAX);
       void AddCol(unsigned int id_tr, unsigned int id_edge);
       void ExportMesh();
+      void ExportMatrix();
 
   private:
       bool ImportCell0D(const string cell0D);

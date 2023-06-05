@@ -175,17 +175,35 @@ namespace ProjectLibrary
     ofstream file;
     string cell0D = "./../Project/Dataset/Test2Completed/new_cell0D.csv";
     file.open(cell0D);
-    if(file.fail()){cerr<<"Error in import file"<<endl;} else{ExportCell0D(file);} file.close();
+    if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);} else{ExportCell0D(file);} file.close();
     string cell1D = "./../Project/Dataset/Test2Completed/new_cell1D.csv";
     file.open(cell1D);
-    if(file.fail()){cerr<<"Error in import file"<<endl;} else{ExportCell1D(file);} file.close();
+    if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);} else{ExportCell1D(file);} file.close();
     string cell2D = "./../Project/Dataset/Test2Completed/new_cell2D.csv";
     file.open(cell2D);
-    if(file.fail()){cerr<<"Error in import file"<<endl;} else{ExportCell2D(file);} file.close();
+    if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);} else{ExportCell2D(file);} file.close();
   }
   void Mesh::ExportCell0D(ostream& out){out<<"Id x y"<<endl;for(unsigned int i=0; i<nPoints; i++) {out<<points[i]<<endl;}}
   void Mesh::ExportCell1D(ostream& out){out<<"Id punto1 punto2"<<endl;for(unsigned int i=0; i<nEdges; i++) {out<<edges[i]<<endl;}}
   void Mesh::ExportCell2D(ostream& out){out<<"Id punto1 punto2 punto3 lato1 lato2 lato3"<<endl;for(unsigned int i=0; i<nTriangles; i++) {out<<triangles[i]<<endl;}}
+
+  void Mesh::ExportMatrix(){
+    ofstream file;
+    string matrix = "./../Project/Dataset/Test2Completed/matrix.csv";
+    file.open(matrix);
+    if(file.fail()){cerr<<"Error in export matrix"<<endl; throw(1);}
+    unsigned int edge_id=0;
+    for(vector<unsigned int> &v : adjacent){
+      unsigned int i=0;
+      file<<edge_id++<<" ";
+      for(unsigned int elt : v){
+        file<<((i)?" ":"")<<elt;
+        i++;
+      }
+      file<<endl;
+    }
+    file.close();
+  }
 
   Point Mesh::FindPoint(unsigned int id_p){
     Point tmp{points[id_p]};
