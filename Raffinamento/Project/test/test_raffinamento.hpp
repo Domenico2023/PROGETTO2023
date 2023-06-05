@@ -68,6 +68,21 @@ TEST(TestTriangle, TestEqualTrue)
   Edge edge1T2(Point(2,2,2),Point(1,1,1),1), edge2T2(Point(0,0,0),Point(1,1,1),0), edge3T2(Point(2,2,2),Point(0,0,0),2);
   EXPECT_EQ(Triangle({edge1T1,edge2T1,edge3T1},0), Triangle({edge1T2,edge2T2,edge3T2},1));
 }
+TEST(TestTriangle, TestMaxEdge)
+{
+  Edge edge1(Point(0,0,0),Point(1,1,1),0), edge2(Point(2,2,2),Point(1,1,1),1), edge3(Point(2,2,2),Point(0,0,0),2);
+  EXPECT_EQ(Triangle({edge1,edge2,edge3},0).MaxEdge(), edge3);
+}
+TEST(TestTriangle, TestEdges)
+{
+  Edge edge1(Point(0,0,0),Point(1,0,1),0), edge2(Point(2,1,2),Point(1,0,1),1), edge3(Point(2,1,2),Point(0,0,0),2);
+  EXPECT_EQ(Triangle({edge1,edge2,edge3},0).edges, vector<Edge>({edge3,edge2,edge1}));
+}
+TEST(TestTriangle, TestArea)
+{
+  Edge edge1T1(Point(0,0,0),Point(0,1,1),0), edge2T1(Point(0,1,1),Point(1,0,2),1), edge3T1(Point(1,0,2),Point(0,0,0),2);
+  EXPECT_EQ(Triangle({edge1T1,edge2T1,edge3T1},0).area,0.5);
+}
 TEST(TestTriangle, TestEqualFalse)
 {
   Edge edge1T1(Point(0,0,0),Point(1,1,1),0), edge2T1(Point(2,2,2),Point(1,1,1),1), edge3T1(Point(2,2,2),Point(0,0,0),2);
@@ -130,6 +145,13 @@ TEST(TestTriangle, TestPointsToEdgeFalse)
   Triangle T({edge1,edge2,edge3},0);
   EXPECT_EQ(T.PointsToEdge(Point(1,1,1),Point(5,5,5)).id, UINT_MAX);
 }
+    //TEST MESH
+//TEST(TestMesh, Test)
+//{
+//  Edge edge1(Point(0,0,0),Point(1,1,1),0), edge2(Point(2,2,2),Point(1,1,1),1), edge3(Point(2,2,2),Point(0,0,0),2);
+//  Triangle T({edge1,edge2,edge3},0);
+//  EXPECT_EQ(T.PointsToEdge(Point(1,1,1),Point(5,5,5)).id, UINT_MAX);
+//}
 
 
 
