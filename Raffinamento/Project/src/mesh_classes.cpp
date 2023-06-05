@@ -31,6 +31,7 @@ namespace ProjectLibrary
 //    return pts;
 //  }
   array<Point, 3> Triangle::EdgesToPoints(){
+      //controlla anche la consistenza
     vector<Point> pts;
     for(Edge &edge : edges){
       if(find(pts.begin(),pts.end(),edge.p1)==pts.end())
@@ -44,9 +45,10 @@ namespace ProjectLibrary
       arr[i]=pts[i];
     return arr;
   }
-  Triangle::Triangle(vector<Edge> edges, unsigned int id): edges(edges), id(id){
+  Triangle::Triangle(vector<Edge> edges, unsigned int id): id(id){
       //controllo consistenza (direttamente in EdgesToPoints
     MSort(edges);  // di default in ordine decrescente
+    this->edges = edges;
     points=EdgesToPoints();
 
     area = AreaTriangle(points[0],points[1],points[2]);
