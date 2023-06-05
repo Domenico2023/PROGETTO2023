@@ -63,7 +63,7 @@ namespace ProjectLibrary
     Point Medium(unsigned int id_p) {return Point((p1.x+p2.x)*0.5,(p1.y+p2.y)*0.5,id_p);}
 
   };
-  inline bool operator==(const Edge E1, const Edge E2){return E1.id == E2.id;}
+  inline bool operator==(const Edge E1, const Edge E2){return ((E1.p1==E2.p1 && E1.p2==E2.p2) || (E1.p1==E2.p2 && E1.p2==E2.p1));}
   inline bool operator!=(const Edge E1, const Edge E2){return !(E1 == E2);}
   inline bool operator>(const Edge E1, const Edge E2){return E1.length > E2.length + Point::geometricTol * max(E1.length, E2.length);}
   inline bool operator<=(const Edge E1, const Edge E2){return !(E1 > E2);}
@@ -89,7 +89,7 @@ namespace ProjectLibrary
       return *this;
     }
     bool Includes(const Edge E){for(unsigned int i=0;i<3;i++) if(this->edges[i]==E) return true; return false;}
-    Point Opposite(Edge E){unsigned int i=0; while(E.Includes(points[i])) i++; return points[i];}
+    Point Opposite(Edge E){if(!Includes(E)){cerr<<"Error: edge not included"<<endl;throw(1);};unsigned int i=0; while(E.Includes(points[i])) i++; return points[i];}
     array<Point, 3> EdgesToPoints();
     Edge PointsToEdge(Point p1, Point p2){
       for(Edge &edge : edges)
@@ -111,7 +111,22 @@ namespace ProjectLibrary
       os<<" "<<T.edges[i].id;
     return os;
   }
-  inline bool operator==(const Triangle T1, const Triangle T2){return T1.id == T2.id;}
+  inline bool operator==(const Triangle T1, const Triangle T2){
+    bool in=true;
+    for(unsigned int i=0;i<3 && in;i++){
+      in = false;
+      for(unsigned int j=0;j<3 && !in;j++)
+        if(T1.points[i]==T2.points[j])
+          in = true;
+    }
+    for(unsigned int i=0;i<3 && in;i++){
+      in = false;
+      for(unsigned int j=0;j<3 && !in;j++)
+        if(T1.edges[i]==T2.edges[j])
+          in = true;
+    }
+      return in;
+  }
 
   class Mesh
   {
