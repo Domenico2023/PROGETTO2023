@@ -297,7 +297,7 @@ namespace ProjectLibrary
 //    return Tnull;
 
     if(adjacent[E.id].size()>1)
-      return triangles[(T.id == adjacent[E.id][0])? 1:0];
+      return triangles[(T.id == adjacent[E.id][0])? adjacent[E.id][1]:adjacent[E.id][0]];
     Triangle Tnull;
     Tnull.id=UINT_MAX;
     return Tnull;
@@ -314,7 +314,7 @@ namespace ProjectLibrary
       //riempio la matrice per posizione
 
     //riempio per triangoli (vector di vector)
-    adjacent.resize(nEdges);
+    adjacent.resize(nEdges);   // push_back è meno efficiente
     for(Triangle &t : triangles)
       for(Edge &e : t.edges)
         adjacent[e.id].push_back(t.id);
@@ -376,12 +376,6 @@ namespace ProjectLibrary
       newTriangle4 = Triangle({newEdgeAdd2, newEdgeSplit2, FindEdge(opposite, top_theta[0].points[1])},dnTriangles);
       dnTriangles++;           
     }
-    // elimino il primo triangolo
-    top_theta.erase(top_theta.begin());
-    n_theta--;
-    // elimino il secondo triangolo
-    if(Extract(AdjTriangle.id)) n_theta--;  //si può scrivere nell'if sopra
-
     // modificare la matrice di adj e aggiungere i nuovi triangoli sia in mesh che in adj
     // sostituzione dei pt, lati e triangoli
     nPoints=dnPoints;
@@ -430,6 +424,11 @@ namespace ProjectLibrary
       AddCol(newTriangle3.id,newEdgeSplit1.id);
       AddCol(newTriangle4.id,newEdgeSplit2.id);
     }
+    // elimino il primo triangolo
+    top_theta.erase(top_theta.begin());
+    n_theta--;
+    // elimino il secondo triangolo
+    if(Extract(AdjTriangle.id)) n_theta--;  //si può scrivere nell'if sopra
   }
   void Mesh::Refining(double theta){
     // generazione del vettore di triangoli ordinato per area e vettore dei primi n_theta elementi
