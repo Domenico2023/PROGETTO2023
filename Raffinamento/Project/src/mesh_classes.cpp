@@ -3,7 +3,7 @@
 #include <iostream>
 #include "Eigen/Eigen"
 #include <fstream>
-
+#include <iomanip>
 
 using namespace std;
 using namespace SortLibrary;
@@ -171,7 +171,7 @@ namespace ProjectLibrary
     return true;
   }
 
-  void Mesh::ExportMesh(){
+  void Mesh::ExportMesh(bool paraview){
     ofstream file;
     string cell0D = "./../Project/Dataset/Test2Completed/new_cell0D.csv";
     file.open(cell0D);
@@ -182,10 +182,33 @@ namespace ProjectLibrary
     string cell2D = "./../Project/Dataset/Test2Completed/new_cell2D.csv";
     file.open(cell2D);
     if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);} else{ExportCell2D(file);} file.close();
+    if(paraview){
+      cell0D = "./../Project/Dataset/Test2Completed/new_ID_Paraview.csv";
+      file.open(cell0D);
+      if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);} else{ExportIDParaview(file);} file.close();
+      cell0D = "./../Project/Dataset/Test2Completed/new_cell0D_Paraview.csv";
+      file.open(cell0D);
+      if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);} else{ExportCell0DParaview(file);} file.close();
+      cell1D = "./../Project/Dataset/Test2Completed/new_cell1D_Paraview.csv";
+      file.open(cell1D);
+      if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);} else{ExportCell1DParaview(file);} file.close();
+    }
   }
   void Mesh::ExportCell0D(ostream& out){out<<"Id x y"<<endl;for(unsigned int i=0; i<nPoints; i++) {out<<points[i]<<endl;}}
   void Mesh::ExportCell1D(ostream& out){out<<"Id punto1 punto2"<<endl;for(unsigned int i=0; i<nEdges; i++) {out<<edges[i]<<endl;}}
   void Mesh::ExportCell2D(ostream& out){out<<"Id punto1 punto2 punto3 lato1 lato2 lato3"<<endl;for(unsigned int i=0; i<nTriangles; i++) {out<<triangles[i]<<endl;}}
+  void Mesh::ExportParaviewfile(){
+    ofstream file;
+    string cellParaview = "./../Project/Dataset/Test2Completed/new_cellParaview.csv";
+    file.open(cellParaview);
+    if(file.fail()){cerr<<"Error in export file paraview"<<endl; throw(1);}
+    file<<"Id Id_p1 p1x p1y Id_p2 p2x p2y"<<endl;
+    for(Edge &edge : edges){file<<edge.id<<" "<<edge.p1<<" "<<edge.p2<<endl;}
+    file.close();
+  }
+  void Mesh::ExportIDParaview(ostream& out){out<<"1 id"<<endl;for(Point &p : points) {out<<1<<" "<<p.id<<endl;}}
+  void Mesh::ExportCell0DParaview(ostream& out){out<<"x y z"<<endl;for(Point &p : points) {out<<setprecision(4)<<fixed<<p.x<<" "<<setprecision(4)<<fixed<<p.y<<" "<<setprecision(4)<<fixed<<0.0<<endl;}}
+  void Mesh::ExportCell1DParaview(ostream& out){out<<"p1 p2"<<endl;for(Edge &e : edges) {out<<2<<" "<<e.p1.id<<" "<<e.p2.id<<endl;}}
 
   void Mesh::ExportMatrix(){
     ofstream file;
