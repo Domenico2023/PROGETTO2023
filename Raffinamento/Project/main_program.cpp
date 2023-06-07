@@ -49,5 +49,6 @@ int main()//int argc, char *argv[])
 //  M.ExportMesh();
   M.Refining(theta);
   M.ExportMesh();
+  M.ExportParaviewfile();
   return 0;
 }
