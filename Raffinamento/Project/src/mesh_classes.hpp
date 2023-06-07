@@ -156,7 +156,8 @@ namespace ProjectLibrary
       void ModifyRow(unsigned int id_t_old, unsigned int id_t_new, unsigned int id_edge);
 //      void AddCol(unsigned int &row1, unsigned int &row2, unsigned int &row3, unsigned int col_ind=UINT_MAX);
       void AddCol(unsigned int id_tr, unsigned int id_edge);
-      void ExportMesh(bool paraview=false);
+      void ExportMesh();
+      void ExportVTK();
       void ExportParaviewfile();
       void ExportMatrix();
 
@@ -167,9 +168,9 @@ namespace ProjectLibrary
       void ExportCell0D(ostream& out);
       void ExportCell1D(ostream& out);
       void ExportCell2D(ostream& out);
-      void ExportIDParaview(ostream& out);
-      void ExportCell0DParaview(ostream& out);
-      void ExportCell1DParaview(ostream& out);
+      void ExportIDVTK(ostream& out);
+      void Export0DVTK(ostream& out);
+      void Export1DVTK(ostream& out);
       void DivideTriangle_base(unsigned int &n_theta);
       void DivideTriangle_advanced(unsigned int &n_theta);
       bool Extract(unsigned int id); // si può mettere top_theta come attributo

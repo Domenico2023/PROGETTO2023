@@ -22,7 +22,7 @@ int main()//int argc, char *argv[])
 {
 
   Mesh M("Cell0Ds.csv","Cell1Ds.csv","Cell2Ds.csv");
-  double theta = 0.2;
+  double theta = 0.5;
   //stampa celle 0D
 //  for(unsigned int i=0;i<M.nPoints;i++)
 //  {
