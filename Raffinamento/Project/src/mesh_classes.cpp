@@ -11,7 +11,10 @@ using namespace SortLibrary;
 namespace ProjectLibrary
 {
 
+    //Triangle constructor
   double AreaTriangle(const Point& p1, const Point& p2, const Point& p3){
+      //restituisce l'area con segno del triangolo formato da quei punti
+      //area positiva se il verso è antiorario, negativa se orario
     MatrixXd M = MatrixXd::Ones(3,3);
 
     M << p1.x, p1.y, 1,
@@ -20,9 +23,8 @@ namespace ProjectLibrary
 
     return 0.5*M.determinant();
 }
-
   array<Point, 3> Triangle::EdgesToPoints(){
-      //controlla anche la consistenza
+      //restituisce i punti del triangolo in base ai lati. controlla anche la consistenza
     vector<Point> pts;
     for(Edge &edge : edges){
       if(find(pts.begin(),pts.end(),edge.p1)==pts.end())
@@ -37,8 +39,8 @@ namespace ProjectLibrary
     return arr;
   }
   Triangle::Triangle(vector<Edge> edges, unsigned int id): id(id){
-      //controllo consistenza (direttamente in EdgesToPoints
-    MSort(edges);  // di default in ordine decrescente
+      //costruisce il triangolo. controlla consistenza (in EdgesToPoints)
+    MSort(edges);  // default : ordine decrescente
     this->edges = edges;
     points=EdgesToPoints();
 
@@ -61,23 +63,43 @@ namespace ProjectLibrary
       area = abs(area);
     }
 
-   // riordinare i punti per lato più lungo
-    while(!(edges[0].Includes(points[0]) && edges[0].Includes(points[1]))){
+   // riordina i punti per lato più lungo
+    while(!(this->edges[0].Includes(points[0]) && this->edges[0].Includes(points[1]))){
       Point tmp;
       tmp = points[0];
       points[0]=points[1];
       points[1]=points[2];
       points[2]=tmp;
-    }                           // per costruzione di edges e points ce lo abbiamo gratis
+    }
   }
-    //Import
-  Mesh::Mesh(const string cell0D, const string cell1D, const string cell2D){
+    //Find (Triangle)
+  Edge Triangle::PointsToEdge(Point p1, Point p2){
+      //restituisce (se c'è) il lato di estremi p1 e p2, all'interno del triangolo
+    for(Edge &edge : edges)
+      if(edge.Includes(p1) && edge.Includes(p2))
+        return edge;
+    Edge Enull;
+    Enull.id = UINT_MAX;
+    return Enull;
+  }
+  Point Triangle::Opposite(Edge E){
+      //restituisce il vertice opposto al lato
+    if(!Includes(E)){
+      cerr<<"Error: edge not included"<<endl; throw(1);
+    }
+    unsigned int i=0;
+    while(E.Includes(points[i])) i++;
+    return points[i];
+  }
+    //Import (Mesh)
+  TriangularMesh::TriangularMesh(const string cell0D, const string cell1D, const string cell2D){
+      //importa la mesh triangolare
     if(!ImportCell0D(cell0D)){cerr<<"Error in import file"<<endl;}
     if(!ImportCell1D(cell1D)){cerr<<"Error in import file"<<endl;}
     if(!ImportCell2D(cell2D)){cerr<<"Error in import file"<<endl;}
     this->AdjacenceMatrix();
   }
-  bool Mesh::ImportCell0D(const string cell0D)
+  bool TriangularMesh::ImportCell0D(const string cell0D)
   {
     ifstream file;
     file.open("./../Project/Dataset/Test2/"+cell0D); if(file.fail()){return false;}
@@ -101,7 +123,7 @@ namespace ProjectLibrary
     }
     return true;
   }
-  bool Mesh::ImportCell1D(const string cell1D)
+  bool TriangularMesh::ImportCell1D(const string cell1D)
   {
     ifstream file;
     file.open("./../Project/Dataset/Test2/"+cell1D); if(file.fail()){return false;}
@@ -121,14 +143,14 @@ namespace ProjectLibrary
       array<unsigned int,2> vertices;
 
       converter >> id >> marker >> vertices[0] >> vertices[1];
-      Point pt1_edge{this->FindPoint(vertices[0])};
-      Point pt2_edge{this->FindPoint(vertices[1])};
+      Point pt1_edge{FindPoint(vertices[0])};
+      Point pt2_edge{FindPoint(vertices[1])};
       Edge E(pt1_edge,pt2_edge, id);
       edges.push_back(E);
     }
     return true;
   }
-  bool Mesh::ImportCell2D(const string cell2D)
+  bool TriangularMesh::ImportCell2D(const string cell2D)
   {
     ifstream file;
     file.open("./../Project/Dataset/Test2/"+cell2D); if(file.fail()){return false;}
@@ -151,18 +173,24 @@ namespace ProjectLibrary
       for(unsigned int i = 0; i < 3; i++) converter >> vertices[i];
       for(unsigned int i = 0; i < 3; i++) converter >> edges[i];
 
-      // vedi https://www.geeksforgeeks.org/stdfind_if-stdfind_if_not-in-c/
-      //https://stackoverflow.com/questions/15517991/search-a-vector-of-objects-by-object-attribute
-      Edge edg1; edg1=(this->FindEdge(edges[0]));
-      Edge edg2; edg2=(this->FindEdge(edges[1]));
-      Edge edg3; edg3=(this->FindEdge(edges[2]));
+      Edge edg1; edg1=(FindEdge(edges[0]));
+      Edge edg2; edg2=(FindEdge(edges[1]));
+      Edge edg3; edg3=(FindEdge(edges[2]));
       Triangle T({edg1,edg2,edg3}, id);
       triangles.push_back(T);
     }
     return true;
   }
-    //Export
-  void Mesh::ExportMesh(){
+  void TriangularMesh::AdjacenceMatrix(){
+      //genera la matrice di adiacenza
+      //riempie per triangoli
+    adjacent.resize(nEdges);   // iterare push_back è meno efficiente
+    for(Triangle &t : triangles)
+      for(Edge &e : t.edges)
+        adjacent[e.id].push_back(t.id);
+  }
+    //Export (Mesh)
+  void TriangularMesh::ExportMesh(){
     ofstream file;
     string cell0D = "./../Project/Dataset/Test2Completed/new0D_t50.csv";
     file.open(cell0D);
@@ -174,36 +202,36 @@ namespace ProjectLibrary
     file.open(cell2D);
     if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);} else{ExportCell2D(file);} file.close();
   }
-  void Mesh::ExportCell0D(ostream& out){out<<"Id x y"<<endl;for(unsigned int i=0; i<nPoints; i++) {out<<points[i]<<endl;}}
-  void Mesh::ExportCell1D(ostream& out){out<<"Id punto1 punto2"<<endl;for(unsigned int i=0; i<nEdges; i++) {out<<edges[i]<<endl;}}
-  void Mesh::ExportCell2D(ostream& out){out<<"Id punto1 punto2 punto3 lato1 lato2 lato3"<<endl;for(unsigned int i=0; i<nTriangles; i++) {out<<triangles[i]<<endl;}}
-  void Mesh::ExportParaviewfile(){
+  void TriangularMesh::ExportCell0D(ostream& out){out<<"Id x y"<<endl;for(unsigned int i=0; i<nPoints; i++) {out<<points[i]<<endl;}}
+  void TriangularMesh::ExportCell1D(ostream& out){out<<"Id punto1 punto2"<<endl;for(unsigned int i=0; i<nEdges; i++) {out<<edges[i]<<endl;}}
+  void TriangularMesh::ExportCell2D(ostream& out){out<<"Id punto1 punto2 punto3 lato1 lato2 lato3"<<endl;for(unsigned int i=0; i<nTriangles; i++) {out<<triangles[i]<<endl;}}
+    //Export Paraview file and VTK file
+  void TriangularMesh::ExportParaviewfile(const short int test){
     ofstream file;
-    string cellParaview = "./../Project/Dataset/Test2Completed/newParaview_t50.csv";
+    int percentage = theta*100;
+    string cellParaview = "./../Project/Dataset/Test"+to_string(test)+"Completed/newParaview_t"+to_string(percentage)+".csv";
     file.open(cellParaview);
     if(file.fail()){cerr<<"Error in export file paraview"<<endl; throw(1);}
     file<<"Id Id_p1 p1x p1y Id_p2 p2x p2y"<<endl;
     for(Edge &edge : edges){file<<edge.id<<" "<<edge.p1<<" "<<edge.p2<<endl;}
     file.close();
   }
-  void Mesh::ExportVTK(){
-      //scrive il file vtk da dare in pasto a Paraview
+  void TriangularMesh::ExportVTK(const short int test){
     ofstream file;
-    string path = "./../Project/Dataset/Test2Completed/new_ID_VTK.csv";
+    int percentage = theta*100;
+    string path = "./../Project/Dataset/Test"+to_string(test)+"Completed/newVTK_t"+to_string(percentage)+".vtk";
     file.open(path);
-    if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);} else{ExportIDVTK(file);} file.close();
-    path = "./../Project/Dataset/Test2Completed/new_0D_VTK.csv";
-    file.open(path);
-    if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);} else{Export0DVTK(file);} file.close();
-    path = "./../Project/Dataset/Test2Completed/new_1D_VTK.csv";
-    file.open(path);
-    if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);} else{Export1DVTK(file);} file.close();
+    if(file.fail()){cerr<<"Error in export VTK file"<<endl; throw(1);}
+    file<<"vtk file_t"<<to_string(percentage)<<endl<<"ASCII"<<endl<<"DATASET POLYDATA"<<endl<<endl;
+    file<<"POINTS "<<nPoints<<" double"<<endl;
+    for(Point &p : points)
+      file<<setprecision(4)<<fixed<<p.x<<" "<<setprecision(4)<<fixed<<p.y<<" "<<setprecision(4)<<fixed<<0.0<<endl;
+    file<<endl<<"LINES "<<nEdges<<" "<<nEdges*3<<endl;
+    for(Edge &e : edges)
+      file<<2<<" "<<e.p1.id<<" "<<e.p2.id<<endl;
+    file.close();
   }
-
-  void Mesh::ExportIDVTK(ostream& out){out<<"1 id"<<endl;for(Point &p : points) {out<<1<<" "<<p.id<<endl;}}
-  void Mesh::Export0DVTK(ostream& out){out<<"x y z"<<endl;for(Point &p : points) {out<<setprecision(4)<<fixed<<p.x<<" "<<setprecision(4)<<fixed<<p.y<<" "<<setprecision(4)<<fixed<<0.0<<endl;}}
-  void Mesh::Export1DVTK(ostream& out){out<<"p1 p2"<<endl;for(Edge &e : edges) {out<<2<<" "<<e.p1.id<<" "<<e.p2.id<<endl;}}
-  void Mesh::ExportMatrix(){
+  void TriangularMesh::ExportMatrix(){
     ofstream file;
     string matrix = "./../Project/Dataset/Test2Completed/matrix.csv";
     file.open(matrix);
@@ -221,38 +249,46 @@ namespace ProjectLibrary
     file.close();
   }
     //Find and Modify (Mesh)
-  Point Mesh::FindPoint(unsigned int id_p){
+  Point TriangularMesh::FindPoint(unsigned int id_p){
+      //restituisce il punto di id=id_p
     Point tmp{points[id_p]};
     return tmp;
   }
-  Edge Mesh::FindEdge(Point &p1, Point &p2){
+  Edge TriangularMesh::FindEdge(Point &p1, Point &p2){
+      //restituisce il lato di estremi p1 e p2
+      // vedi https://www.geeksforgeeks.org/stdfind_if-stdfind_if_not-in-c/
+      //https://stackoverflow.com/questions/15517991/search-a-vector-of-objects-by-object-attribute
     auto e1 = find_if(edges.begin(), edges.end(), [p1,p2](Edge edg){return (edg.Includes(p1) && edg.Includes(p2));});
     return edges[distance(edges.begin(),e1)];
   }
-  Edge Mesh::FindEdge(unsigned int id_e){
+  Edge TriangularMesh::FindEdge(unsigned int id_e){
+      //restituisce il lato di id=id_e
     Edge tmp{edges[id_e]};
     return tmp;
   }
-  void Mesh::AddPoint(Point point, unsigned int indice){
-      if(indice>=points.size())
-          points.push_back(point);
-      else
-          points[indice]=point;     // (indice, points.begin());
+  void TriangularMesh::AddPoint(Point point, unsigned int indice){
+      //aggiunge un punto alla mesh in posizione data o in coda
+    if(indice>=points.size())
+      points.push_back(point);
+    else
+      points[indice]=point;
   }
-  void Mesh::AddEdge(Edge edge, unsigned int indice){
-      if(indice>=edges.size())
-          edges.push_back(edge);
-      else
-          edges[indice]=edge;
+  void TriangularMesh::AddEdge(Edge edge, unsigned int indice){
+      //aggiunge un lato in posizione data o in coda
+    if(indice>=edges.size())
+      edges.push_back(edge);
+    else
+      edges[indice]=edge;
   }
-  void Mesh::AddTriangle(Triangle triangle, unsigned int indice){
-      if(indice>=triangles.size())
-          triangles.push_back(triangle);
-      else
-          triangles[indice]=triangle;
+  void TriangularMesh::AddTriangle(Triangle triangle, unsigned int indice){
+      //aggiunge un triangolo in posizione data o in coda
+    if(indice>=triangles.size())
+      triangles.push_back(triangle);
+    else
+      triangles[indice]=triangle;
   }
     //Find and Modify (Adjacent Matrix)
-  Triangle Mesh::FindAdjacence(Triangle &T, Edge E){
+  Triangle TriangularMesh::FindAdjacence(Triangle &T, Edge E){
       //restituisce (se c'è) il triangolo adiacente al lato E diverso da T
     if(adjacent[E.id].size()>1)
       return triangles[(T.id == adjacent[E.id][0])? adjacent[E.id][1]:adjacent[E.id][0]];
@@ -260,7 +296,7 @@ namespace ProjectLibrary
     Tnull.id=UINT_MAX;
     return Tnull;
   }
-  void Mesh::InsertRow(const vector<unsigned int> &t, unsigned int id_edge){
+  void TriangularMesh::InsertRow(const vector<unsigned int> &t, unsigned int id_edge){
       //inserisce un nuovo lato, con le sue adiacenze, all'interno della matrice.
       //se il nuovo lato ha un id già utilizzato, sostituisce la riga corrispondente al lato rimpiazzato
     if(id_edge>=adjacent.size())
@@ -270,29 +306,30 @@ namespace ProjectLibrary
       adjacent[id_edge] = t;
     }
   }
-  void Mesh::ModifyRow(unsigned int id_t_old, unsigned int id_t_new, unsigned int id_edge){
+  void TriangularMesh::ModifyRow(unsigned int id_t_old, unsigned int id_t_new, unsigned int id_edge){
       //aggiorna un'adiacenza rimpiazzando il triangolo vecchio con quello nuovo
     if(adjacent[id_edge][0]==id_t_old)
       adjacent[id_edge][0]=id_t_new;
     else if(adjacent[id_edge].size()>1)
       adjacent[id_edge][1]=id_t_new;
     else
-    {cerr<<"Error: impossible to save triangle id in adjacent matrix"<<endl; throw(1);}
+    {cerr<<"Error: not possible to save triangle id in adjacent matrix"<<endl; throw(1);}
   }
-  void Mesh::AddCol(unsigned int id_tr, unsigned int id_edge){
+  void TriangularMesh::AddCol(unsigned int id_tr, unsigned int id_edge){
       //aggiunge un'adiacenza a un lato
     adjacent[id_edge].push_back(id_tr);
   }
-
-  void Mesh::AdjacenceMatrix(){
-      //genera la matrice di adiacenza
-      //riempie per triangoli
-    adjacent.resize(nEdges);   // push_back è meno efficiente
-    for(Triangle &t : triangles)
-      for(Edge &e : t.edges)
-        adjacent[e.id].push_back(t.id);
+    //Refining (Mesh)
+  unsigned int TriangularMesh::TopTheta(){
+      //salva i primi n_theta triangoli ordinati per area in n_theta e ne restituisce il numero
+    vector<Triangle> sorted_vec = triangles;
+    MSort(sorted_vec);
+    unsigned int n_theta = round(theta*nTriangles);
+    top_theta.resize(n_theta);
+    top_theta = {sorted_vec.begin(), sorted_vec.begin()+n_theta};
+    return n_theta;
   }
-  bool Mesh::Extract(unsigned int id){
+  bool TriangularMesh::Extract(unsigned int id){
       //estrae il triangolo con id=id dal vettore top_theta
     for(unsigned int i=0; i<top_theta.size(); i++){
       if (id==top_theta[i].id){
@@ -302,17 +339,8 @@ namespace ProjectLibrary
     }
     return false;
   }
-  unsigned int Mesh::TopTheta(double theta){
-      //salva i primi n_theta triangoli ordinati per area in n_theta e ne restituisce il numero
-    vector<Triangle> sorted_vec = triangles;
-    MSort(sorted_vec);
-    unsigned int n_theta = round(theta*nTriangles);
-    top_theta.resize(n_theta);
-    top_theta = {sorted_vec.begin(), sorted_vec.begin()+n_theta};
-    return n_theta;
-  }
-  void Mesh::DivideTriangle_base(unsigned int &n_theta){
-      //
+  void TriangularMesh::DivideTriangle_base(unsigned int &n_theta){
+      //divide il triangolo attuale (top_theta[0]) e quello adiacente al lato più lungo (se c'è)
     Point medio;
     Edge newEdgeAdd1,newEdgeSplit1, newEdgeSplit2;
     Edge newEdgeAdd2;
@@ -385,9 +413,10 @@ namespace ProjectLibrary
     // elimino il secondo triangolo
     if(Extract(AdjTriangle.id)) n_theta--;
   }
-  void Mesh::Refining(double theta){
+  void TriangularMesh::Refining(double theta){
     //chiama DivideTriangle finché non ha diviso tutti i triangoli del vettore top_theta
-    unsigned int n_theta = TopTheta(theta);
+    this->theta = theta;
+    unsigned int n_theta = TopTheta();
     // per ogni triangolo in top_theta:  dividi_triangolo (e ricalcola adiacenze)
     while(n_theta > 0)
       DivideTriangle_base(n_theta);

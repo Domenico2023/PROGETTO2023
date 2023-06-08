@@ -6,7 +6,6 @@
 #include "Eigen/Eigen"
 
 #include "mesh_classes.hpp"
-//#include "mesh_classes.cpp"
 #include "sorting.hpp"
 
 using namespace testing;
@@ -15,7 +14,7 @@ using namespace Eigen;
 using namespace ProjectLibrary;
 using namespace SortLibrary;
 
-Mesh M("Cell0Ds.csv","Cell1Ds.csv","Cell2Ds.csv");
+//TriangularMesh M("Cell0Ds.csv","Cell1Ds.csv","Cell2Ds.csv");
 
 
     //TEST SORTING
