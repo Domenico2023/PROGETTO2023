@@ -72,8 +72,10 @@ namespace ProjectLibrary
     Triangle(vector<Edge> edges, unsigned int id);
     Triangle(const Triangle &T): points(T.points), edges(T.edges), id(T.id),area(T.area){}
     Triangle& operator=(const Triangle &T){points=T.points; edges=T.edges; id=T.id; area=T.area; return *this;}
-    bool Includes(const Edge E){for(unsigned int i=0;i<3;i++) if(edges[i]==E) return true; return false;}
+    bool Includes(const Edge E){for(Edge &edge : edges) if(edge==E) return true; return false;}
+    bool Includes(const Point p){for(Point &pt : points) if(pt==p) return true; return false;}
     Point Opposite(Edge E);
+    Edge Opposite(Point p);
     Edge MaxEdge(){return edges[0];}
     array<Point, 3> EdgesToPoints();
     Edge PointsToEdge(Point p1, Point p2);
@@ -113,10 +115,11 @@ namespace ProjectLibrary
       vector<vector<unsigned int>> adjacent;
       vector<Triangle> top_theta; //si può ottimizzare salvando solo gli id
       double theta;
+      short int test;
 
     public:
       TriangularMesh() = default;
-      TriangularMesh(const string cell0D, const string cell1D, const string cell2D);
+      TriangularMesh(const string cell0D, const string cell1D, const string cell2D, short int test);
       void Refining(double theta);
       void AddPoint(Point point, unsigned int indice=UINT_MAX);
       void AddEdge(Edge edge, unsigned int indice=UINT_MAX);
@@ -127,8 +130,8 @@ namespace ProjectLibrary
       bool IsAdjacent(Triangle &T,Edge &E){return T.Includes(E);}
       Triangle FindAdjacence(Triangle &T, Edge E);
       void ExportMesh();
-      void ExportParaviewfile(const short int test);
-      void ExportVTK(const short int test);
+      void ExportParaviewfile();
+      void ExportVTK();
       void ExportMatrix();
 
     private:

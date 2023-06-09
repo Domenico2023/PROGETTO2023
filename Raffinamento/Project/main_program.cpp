@@ -5,15 +5,28 @@ using namespace std;
 using namespace ProjectLibrary;
 
 
-int main()//int argc, char *argv[])
+int main(int argc, char *argv[])
 {
-  TriangularMesh M("Cell0Ds.csv","Cell1Ds.csv","Cell2Ds.csv");
-  double theta = 0.2;
+  vector<short int> test;
+  test = {1,2};
+  vector<double> theta;
 
-//  M.ExportMesh();
-  M.Refining(theta);
-//  M.ExportMesh();
-  M.ExportParaviewfile(2);
-  M.ExportVTK(2);
+  if(argc > 1)
+    for(int i=1;i<argc;i++)
+      theta.push_back(stod(argv[i]));
+  else{
+    theta = {0.2, 0.5, 0.7};
+    cout<<"err";
+  }
+
+  for(double &percentage : theta){
+    for(short int &t : test){
+      TriangularMesh M("Cell0Ds.csv","Cell1Ds.csv","Cell2Ds.csv",t);
+      M.Refining(percentage);
+      M.ExportMesh();
+      M.ExportParaviewfile();
+//      M.ExportVTK();
+    }
+  }
   return 0;
 }

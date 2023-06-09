@@ -91,8 +91,17 @@ namespace ProjectLibrary
     while(E.Includes(points[i])) i++;
     return points[i];
   }
+  Edge Triangle::Opposite(Point p){
+      //restituisce il lato opposto al vertice
+    if(!Includes(p)){
+      cerr<<"Error: point not included"<<endl; throw(1);
+    }
+    unsigned int i=0;
+    while(edges[i].Includes(p)) i++;
+    return edges[i];
+  }
     //Import (Mesh)
-  TriangularMesh::TriangularMesh(const string cell0D, const string cell1D, const string cell2D){
+  TriangularMesh::TriangularMesh(const string cell0D, const string cell1D, const string cell2D, short int test): test(test){
       //importa la mesh triangolare
     if(!ImportCell0D(cell0D)){cerr<<"Error in import file"<<endl;}
     if(!ImportCell1D(cell1D)){cerr<<"Error in import file"<<endl;}
@@ -102,7 +111,7 @@ namespace ProjectLibrary
   bool TriangularMesh::ImportCell0D(const string cell0D)
   {
     ifstream file;
-    file.open("./../Project/Dataset/Test2/"+cell0D); if(file.fail()){return false;}
+    file.open("./../Project/Dataset/Test"+to_string(test)+"/"+cell0D); if(file.fail()){return false;}
 
     list<string> listLines;
     string line;
@@ -126,7 +135,7 @@ namespace ProjectLibrary
   bool TriangularMesh::ImportCell1D(const string cell1D)
   {
     ifstream file;
-    file.open("./../Project/Dataset/Test2/"+cell1D); if(file.fail()){return false;}
+    file.open("./../Project/Dataset/Test"+to_string(test)+"/"+cell1D); if(file.fail()){return false;}
 
     list<string> listLines;
     string line;
@@ -153,7 +162,7 @@ namespace ProjectLibrary
   bool TriangularMesh::ImportCell2D(const string cell2D)
   {
     ifstream file;
-    file.open("./../Project/Dataset/Test2/"+cell2D); if(file.fail()){return false;}
+    file.open("./../Project/Dataset/Test"+to_string(test)+"/"+cell2D); if(file.fail()){return false;}
 
     list<string> listLines;
     string line;
@@ -192,13 +201,14 @@ namespace ProjectLibrary
     //Export (Mesh)
   void TriangularMesh::ExportMesh(){
     ofstream file;
-    string cell0D = "./../Project/Dataset/Test2Completed/new0D_t50.csv";
+    int percentage = theta*100;
+    string cell0D = "./../Project/Dataset/Test"+to_string(test)+"Completed/New0D_t"+to_string(percentage)+".csv";
     file.open(cell0D);
     if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);} else{ExportCell0D(file);} file.close();
-    string cell1D = "./../Project/Dataset/Test2Completed/new1D_t50.csv";
+    string cell1D = "./../Project/Dataset/Test"+to_string(test)+"Completed/New1D_t"+to_string(percentage)+".csv";
     file.open(cell1D);
     if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);} else{ExportCell1D(file);} file.close();
-    string cell2D = "./../Project/Dataset/Test2Completed/new2D_t50.csv";
+    string cell2D = "./../Project/Dataset/Test"+to_string(test)+"Completed/New2D_t"+to_string(percentage)+".csv";
     file.open(cell2D);
     if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);} else{ExportCell2D(file);} file.close();
   }
@@ -206,7 +216,7 @@ namespace ProjectLibrary
   void TriangularMesh::ExportCell1D(ostream& out){out<<"Id punto1 punto2"<<endl;for(unsigned int i=0; i<nEdges; i++) {out<<edges[i]<<endl;}}
   void TriangularMesh::ExportCell2D(ostream& out){out<<"Id punto1 punto2 punto3 lato1 lato2 lato3"<<endl;for(unsigned int i=0; i<nTriangles; i++) {out<<triangles[i]<<endl;}}
     //Export Paraview file and VTK file
-  void TriangularMesh::ExportParaviewfile(const short int test){
+  void TriangularMesh::ExportParaviewfile(){
     ofstream file;
     int percentage = theta*100;
     string cellParaview = "./../Project/Dataset/Test"+to_string(test)+"Completed/newParaview_t"+to_string(percentage)+".csv";
@@ -216,7 +226,7 @@ namespace ProjectLibrary
     for(Edge &edge : edges){file<<edge.id<<" "<<edge.p1<<" "<<edge.p2<<endl;}
     file.close();
   }
-  void TriangularMesh::ExportVTK(const short int test){
+  void TriangularMesh::ExportVTK(){
     ofstream file;
     int percentage = theta*100;
     string path = "./../Project/Dataset/Test"+to_string(test)+"Completed/newVTK_t"+to_string(percentage)+".vtk";
@@ -233,7 +243,7 @@ namespace ProjectLibrary
   }
   void TriangularMesh::ExportMatrix(){
     ofstream file;
-    string matrix = "./../Project/Dataset/Test2Completed/matrix.csv";
+    string matrix = "./../Project/Dataset/Test"+to_string(test)+"Completed/matrix.csv";
     file.open(matrix);
     if(file.fail()){cerr<<"Error in export matrix"<<endl; throw(1);}
     unsigned int edge_id=0;

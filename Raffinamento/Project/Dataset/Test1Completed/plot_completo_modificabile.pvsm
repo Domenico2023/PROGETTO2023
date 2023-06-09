@@ -1,3 +1,8 @@
+# per cambiare plot sostituire i nomi dei file:		#con CTRL+F è più rapido sostituire tutto
+# per i lati : newParaview_t50 , newParaview_t50 , newParaview_t70
+# per i punti : New0D_t50 , New0D_t50 , New0D_t70
+# P.S. qualunque altro valore percentuale oltre a 20, 50 e 70 va bene (basta prima creare i file con il codice C++ di Raffinamento Mesh)
+
 <ParaView>
   <ServerManagerState version="5.11.1">
     <Proxy group="animation" type="AnimationScene" id="263" servers="16">
@@ -7478,11 +7483,11 @@
     </Proxy>
     <Proxy group="sources" type="CSVReader" id="9898" servers="1">
       <Property name="FileName" id="9898.FileName" number_of_elements="1">
-        <Element index="0" value="C:\Users\utente\Desktop\PCS2023_Exercises\Raffinamento\Project\Dataset\Test1Completed\new_cell0D.csv"/>
+        <Element index="0" value="C:\Users\utente\Desktop\PCS2023_Exercises\Raffinamento\Project\Dataset\Test1Completed\New0D_t50.csv"/>
         <Domain name="files" id="9898.FileName.files"/>
       </Property>
       <Property name="FileNameInfo" id="9898.FileNameInfo" number_of_elements="1">
-        <Element index="0" value="C:\Users\utente\Desktop\PCS2023_Exercises\Raffinamento\Project\Dataset\Test1Completed\new_cell0D.csv"/>
+        <Element index="0" value="C:\Users\utente\Desktop\PCS2023_Exercises\Raffinamento\Project\Dataset\Test1Completed\New0D_t50.csv"/>
       </Property>
       <Property name="TimestepValues" id="9898.TimestepValues"/>
       <Property name="AddTabFieldDelimiter" id="9898.AddTabFieldDelimiter" number_of_elements="1">
@@ -7511,11 +7516,11 @@
     </Proxy>
     <Proxy group="sources" type="CSVReader" id="8954" servers="1">
       <Property name="FileName" id="8954.FileName" number_of_elements="1">
-        <Element index="0" value="C:\Users\utente\Desktop\PCS2023_Exercises\Raffinamento\Project\Dataset\Test1Completed\new_cellParaview.csv"/>
+        <Element index="0" value="C:\Users\utente\Desktop\PCS2023_Exercises\Raffinamento\Project\Dataset\Test1Completed\newParaview_t50.csv"/>
         <Domain name="files" id="8954.FileName.files"/>
       </Property>
       <Property name="FileNameInfo" id="8954.FileNameInfo" number_of_elements="1">
-        <Element index="0" value="C:\Users\utente\Desktop\PCS2023_Exercises\Raffinamento\Project\Dataset\Test1Completed\new_cellParaview.csv"/>
+        <Element index="0" value="C:\Users\utente\Desktop\PCS2023_Exercises\Raffinamento\Project\Dataset\Test1Completed\newParaview_t50.csv"/>
       </Property>
       <Property name="TimestepValues" id="8954.TimestepValues"/>
       <Property name="AddTabFieldDelimiter" id="8954.AddTabFieldDelimiter" number_of_elements="1">
@@ -8167,19 +8172,19 @@
       <Item id="261" name="MaterialLibrary1"/>
     </ProxyCollection>
     <ProxyCollection name="pq_helper_proxies.10147">
-      <Item id="9942" name="DataAxesGrid" logname="TableToPoints2(GeometryRepresentation)/DataAxesGrid/GridAxesRepresentation"/>
-      <Item id="9979" name="GlyphType" logname="TableToPoints2(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/ArrowSource"/>
-      <Item id="9990" name="GlyphType" logname="TableToPoints2(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/ConeSource"/>
-      <Item id="10001" name="GlyphType" logname="TableToPoints2(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/CubeSource"/>
-      <Item id="10012" name="GlyphType" logname="TableToPoints2(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/CylinderSource"/>
-      <Item id="10023" name="GlyphType" logname="TableToPoints2(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/LineSource"/>
-      <Item id="10034" name="GlyphType" logname="TableToPoints2(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/SphereSource"/>
-      <Item id="10045" name="GlyphType" logname="TableToPoints2(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/GlyphSource2D"/>
-      <Item id="10056" name="GlyphType" logname="TableToPoints2(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/PipelineConnection"/>
-      <Item id="10135" name="OSPRayScaleFunction" logname="TableToPoints2(GeometryRepresentation)/SurfaceRepresentation/OSPRayScaleFunction/PiecewiseFunction"/>
-      <Item id="10089" name="OpacityTransferFunction" logname="TableToPoints2(GeometryRepresentation)/PointGaussianRepresentation/OpacityTransferFunction/PiecewiseFunction"/>
-      <Item id="9957" name="PolarAxes" logname="TableToPoints2(GeometryRepresentation)/PolarAxes/PolarAxesRepresentation"/>
-      <Item id="10090" name="ScaleTransferFunction" logname="TableToPoints2(GeometryRepresentation)/PointGaussianRepresentation/ScaleTransferFunction/PiecewiseFunction"/>
+      <Item id="9942" name="DataAxesGrid" logname="Points(GeometryRepresentation)/DataAxesGrid/GridAxesRepresentation"/>
+      <Item id="9979" name="GlyphType" logname="Points(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/ArrowSource"/>
+      <Item id="9990" name="GlyphType" logname="Points(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/ConeSource"/>
+      <Item id="10001" name="GlyphType" logname="Points(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/CubeSource"/>
+      <Item id="10012" name="GlyphType" logname="Points(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/CylinderSource"/>
+      <Item id="10023" name="GlyphType" logname="Points(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/LineSource"/>
+      <Item id="10034" name="GlyphType" logname="Points(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/SphereSource"/>
+      <Item id="10045" name="GlyphType" logname="Points(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/GlyphSource2D"/>
+      <Item id="10056" name="GlyphType" logname="Points(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/PipelineConnection"/>
+      <Item id="10135" name="OSPRayScaleFunction" logname="Points(GeometryRepresentation)/SurfaceRepresentation/OSPRayScaleFunction/PiecewiseFunction"/>
+      <Item id="10089" name="OpacityTransferFunction" logname="Points(GeometryRepresentation)/PointGaussianRepresentation/OpacityTransferFunction/PiecewiseFunction"/>
+      <Item id="9957" name="PolarAxes" logname="Points(GeometryRepresentation)/PolarAxes/PolarAxesRepresentation"/>
+      <Item id="10090" name="ScaleTransferFunction" logname="Points(GeometryRepresentation)/PointGaussianRepresentation/ScaleTransferFunction/PiecewiseFunction"/>
     </ProxyCollection>
     <ProxyCollection name="pq_helper_proxies.6408">
       <Item id="6405" name="AxesGrid" logname="RenderView1/AxesGrid/GridAxes3DActor"/>
@@ -8212,23 +8217,23 @@
       <Item id="9563" name="ScaleTransferFunction" logname="TableToPoints1(GeometryRepresentation)/PointGaussianRepresentation/ScaleTransferFunction/PiecewiseFunction"/>
     </ProxyCollection>
     <ProxyCollection name="pq_helper_proxies.9632">
-      <Item id="9631" name="GlyphTransform" logname="GlyphWithCustomSource1/GlyphTransform/Transform2"/>
+      <Item id="9631" name="GlyphTransform" logname="Lines/GlyphTransform/Transform2"/>
       <Item id="9643" name="RepresentationAnimationHelper"/>
     </ProxyCollection>
     <ProxyCollection name="pq_helper_proxies.9857">
-      <Item id="9652" name="DataAxesGrid" logname="GlyphWithCustomSource1(GeometryRepresentation)/DataAxesGrid/GridAxesRepresentation"/>
-      <Item id="9689" name="GlyphType" logname="GlyphWithCustomSource1(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/ArrowSource"/>
-      <Item id="9700" name="GlyphType" logname="GlyphWithCustomSource1(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/ConeSource"/>
-      <Item id="9711" name="GlyphType" logname="GlyphWithCustomSource1(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/CubeSource"/>
-      <Item id="9722" name="GlyphType" logname="GlyphWithCustomSource1(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/CylinderSource"/>
-      <Item id="9733" name="GlyphType" logname="GlyphWithCustomSource1(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/LineSource"/>
-      <Item id="9744" name="GlyphType" logname="GlyphWithCustomSource1(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/SphereSource"/>
-      <Item id="9755" name="GlyphType" logname="GlyphWithCustomSource1(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/GlyphSource2D"/>
-      <Item id="9766" name="GlyphType" logname="GlyphWithCustomSource1(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/PipelineConnection"/>
-      <Item id="9845" name="OSPRayScaleFunction" logname="GlyphWithCustomSource1(GeometryRepresentation)/SurfaceRepresentation/OSPRayScaleFunction/PiecewiseFunction"/>
-      <Item id="9799" name="OpacityTransferFunction" logname="GlyphWithCustomSource1(GeometryRepresentation)/PointGaussianRepresentation/OpacityTransferFunction/PiecewiseFunction"/>
-      <Item id="9667" name="PolarAxes" logname="GlyphWithCustomSource1(GeometryRepresentation)/PolarAxes/PolarAxesRepresentation"/>
-      <Item id="9800" name="ScaleTransferFunction" logname="GlyphWithCustomSource1(GeometryRepresentation)/PointGaussianRepresentation/ScaleTransferFunction/PiecewiseFunction"/>
+      <Item id="9652" name="DataAxesGrid" logname="Lines(GeometryRepresentation)/DataAxesGrid/GridAxesRepresentation"/>
+      <Item id="9689" name="GlyphType" logname="Lines(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/ArrowSource"/>
+      <Item id="9700" name="GlyphType" logname="Lines(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/ConeSource"/>
+      <Item id="9711" name="GlyphType" logname="Lines(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/CubeSource"/>
+      <Item id="9722" name="GlyphType" logname="Lines(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/CylinderSource"/>
+      <Item id="9733" name="GlyphType" logname="Lines(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/LineSource"/>
+      <Item id="9744" name="GlyphType" logname="Lines(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/SphereSource"/>
+      <Item id="9755" name="GlyphType" logname="Lines(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/GlyphSource2D"/>
+      <Item id="9766" name="GlyphType" logname="Lines(GeometryRepresentation)/Glyph3DRepresentation/GlyphType/PipelineConnection"/>
+      <Item id="9845" name="OSPRayScaleFunction" logname="Lines(GeometryRepresentation)/SurfaceRepresentation/OSPRayScaleFunction/PiecewiseFunction"/>
+      <Item id="9799" name="OpacityTransferFunction" logname="Lines(GeometryRepresentation)/PointGaussianRepresentation/OpacityTransferFunction/PiecewiseFunction"/>
+      <Item id="9667" name="PolarAxes" logname="Lines(GeometryRepresentation)/PolarAxes/PolarAxesRepresentation"/>
+      <Item id="9800" name="ScaleTransferFunction" logname="Lines(GeometryRepresentation)/PointGaussianRepresentation/ScaleTransferFunction/PiecewiseFunction"/>
     </ProxyCollection>
     <ProxyCollection name="pq_helper_proxies.9898">
       <Item id="9909" name="RepresentationAnimationHelper"/>
@@ -8238,8 +8243,8 @@
     </ProxyCollection>
     <ProxyCollection name="representations">
       <Item id="9620" name="GeometryRepresentation1" logname="TableToPoints1(GeometryRepresentation)"/>
-      <Item id="9857" name="GeometryRepresentation2" logname="GlyphWithCustomSource1(GeometryRepresentation)"/>
-      <Item id="10147" name="GeometryRepresentation3" logname="TableToPoints2(GeometryRepresentation)"/>
+      <Item id="9857" name="GeometryRepresentation2" logname="Lines(GeometryRepresentation)"/>
+      <Item id="10147" name="GeometryRepresentation3" logname="Points(GeometryRepresentation)"/>
     </ProxyCollection>
     <ProxyCollection name="settings">
       <Item id="267" name="ColorPalette"/>
@@ -8247,11 +8252,11 @@
     <ProxyCollection name="sources">
       <Item id="9087" name="Calculator1" logname="Calculator1"/>
       <Item id="9371" name="Calculator2" logname="Calculator2"/>
-      <Item id="9632" name="GlyphWithCustomSource1" logname="GlyphWithCustomSource1"/>
+      <Item id="9632" name="Lines" logname="Lines"/>
       <Item id="9395" name="TableToPoints1" logname="TableToPoints1"/>
-      <Item id="9922" name="TableToPoints2" logname="TableToPoints2"/>
-      <Item id="9898" name="new_cell0D.csv" logname="new_cell0D.csv"/>
-      <Item id="8954" name="new_cellParaview.csv" logname="new_cellParaview.csv"/>
+      <Item id="9922" name="Points" logname="Points"/>
+      <Item id="9898" name="New0D_t50.csv" logname="New0D_t50.csv"/>
+      <Item id="8954" name="newParaview_t50.csv" logname="newParaview_t50.csv"/>
     </ProxyCollection>
     <ProxyCollection name="timekeeper">
       <Item id="256" name="TimeKeeper1"/>
