@@ -186,18 +186,28 @@ namespace ProjectLibrary
         adjacent[e.id].push_back(t.id);
   }
     //Export (Mesh)
-  void TriangularMesh::ExportMesh(){
+  void TriangularMesh::ExportMesh(vector<short int> cells, string all){
+    if(all=="all") {cells.resize(3); cells={0,1,2};}
     ofstream file;
     int percentage = theta*100;
-    string cell0D = "./../Project/Dataset/Test"+to_string(test)+"Completed/New0D_t"+to_string(percentage)+".csv";
-    file.open(cell0D);
-    if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);} else{ExportCell0D(file);} file.close();
-    string cell1D = "./../Project/Dataset/Test"+to_string(test)+"Completed/New1D_t"+to_string(percentage)+".csv";
-    file.open(cell1D);
-    if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);} else{ExportCell1D(file);} file.close();
-    string cell2D = "./../Project/Dataset/Test"+to_string(test)+"Completed/New2D_t"+to_string(percentage)+".csv";
-    file.open(cell2D);
-    if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);} else{ExportCell2D(file);} file.close();
+    if(find(cells.begin(),cells.end(),0)!=cells.end()){
+      string cell0D = "./../Project/Dataset/Test"+to_string(test)+"Completed/New0D_t"+to_string(percentage)+".csv";
+      file.open(cell0D);
+      if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);}
+      ExportCell0D(file); file.close();
+    }
+    if(find(cells.begin(),cells.end(),1)!=cells.end()){
+      string cell1D = "./../Project/Dataset/Test"+to_string(test)+"Completed/New1D_t"+to_string(percentage)+".csv";
+      file.open(cell1D);
+      if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);}
+      ExportCell1D(file); file.close();
+    }
+    if(find(cells.begin(),cells.end(),2)!=cells.end()){
+      string cell2D = "./../Project/Dataset/Test"+to_string(test)+"Completed/New2D_t"+to_string(percentage)+".csv";
+      file.open(cell2D);
+      if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);}
+      ExportCell2D(file); file.close();
+    }
   }
   void TriangularMesh::ExportCell0D(ostream& out){out<<"Id x y"<<endl;for(unsigned int i=0; i<nPoints; i++) {out<<points[i]<<endl;}}
   void TriangularMesh::ExportCell1D(ostream& out){out<<"Id punto1 punto2"<<endl;for(unsigned int i=0; i<nEdges; i++) {out<<edges[i]<<endl;}}
@@ -219,7 +229,7 @@ namespace ProjectLibrary
     string path = "./../Project/Dataset/Test"+to_string(test)+"Completed/newVTK_t"+to_string(percentage)+".vtk";
     file.open(path);
     if(file.fail()){cerr<<"Error in export VTK file"<<endl; throw(1);}
-    file<<"vtk file_t"<<to_string(percentage)<<endl<<"ASCII"<<endl<<"DATASET POLYDATA"<<endl<<endl;
+    file<<"# vtk DataFile Version 3.0"<<endl<<"vtk file_t"<<to_string(percentage)<<endl<<"ASCII"<<endl<<"DATASET POLYDATA"<<endl<<endl;
     file<<"POINTS "<<nPoints<<" double"<<endl;
     for(Point &p : points)
       file<<setprecision(4)<<fixed<<p.x<<" "<<setprecision(4)<<fixed<<p.y<<" "<<setprecision(4)<<fixed<<0.0<<endl;
@@ -508,21 +518,22 @@ namespace ProjectLibrary
           ModifyRow(newTriangle1.id,newTriangle3.id,newEdgeAdd1.id);
           AddCol(newTriangle3.id, Split1.id);
           AddCol(newTriangle4.id, Split2.id);
-
       }
-
   }
 
 
-  void TriangularMesh::Refining(double theta){
+  void TriangularMesh::Refining(double theta, vector<string> level){
     //chiama DivideTriangle finché non ha diviso tutti i triangoli del vettore top_theta
     this->theta = theta;
     unsigned int n_theta = TopTheta();
     // per ogni triangolo in top_theta:  dividi_triangolo (e ricalcola adiacenze)
-    while(n_theta > 0)
-      DivideTriangle_advanced(n_theta);
+    while(n_theta > 0){
+      if(find_if(level.begin(), level.end(), [](string &str){return str=="base";})!=level.end())
+        DivideTriangle_base(n_theta);
+      if(find_if(level.begin(), level.end(), [](string &str){return str=="advanced";})!=level.end())
+        DivideTriangle_advanced(n_theta);
+    }
   }
-
 }
 
 

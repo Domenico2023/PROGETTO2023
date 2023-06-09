@@ -119,7 +119,7 @@ namespace ProjectLibrary
     public:
       TriangularMesh() = default;
       TriangularMesh(const string cell0D, const string cell1D, const string cell2D, short int test);
-      void Refining(double theta);
+      void Refining(double theta, vector<string> level={"base"});
       void AddPoint(Point point, unsigned int indice=UINT_MAX);
       void AddEdge(Edge edge, unsigned int indice=UINT_MAX);
       void AddTriangle(Triangle triangle, unsigned int indice=UINT_MAX);
@@ -128,7 +128,7 @@ namespace ProjectLibrary
       Point FindPoint(unsigned int id_p);
       bool IsAdjacent(Triangle &T,Edge &E){return T.Includes(E);}
       Triangle FindAdjacence(Triangle &T, Edge E);
-      void ExportMesh();
+      void ExportMesh(vector<short int> cells={0}, string all="");
       void ExportParaviewfile();
       void ExportVTK();
       void ExportMatrix();
