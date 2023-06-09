@@ -16,8 +16,7 @@ namespace ProjectLibrary
     double x;
     double y;
     unsigned int id;
-    Point *succ = nullptr;
-    Point *prec = nullptr;
+
     static constexpr double geometricTol = 1.0e-12;
     static constexpr double geometricTol_Squared = max_tolerance(Point::geometricTol * Point::geometricTol, numeric_limits<double>::epsilon());
 
@@ -124,7 +123,7 @@ namespace ProjectLibrary
       void AddPoint(Point point, unsigned int indice=UINT_MAX);
       void AddEdge(Edge edge, unsigned int indice=UINT_MAX);
       void AddTriangle(Triangle triangle, unsigned int indice=UINT_MAX);
-      Edge FindEdge(Point &p1, Point &p2);
+      Edge FindEdge(Point p1, Point p2);
       Edge FindEdge(unsigned int id_e);
       Point FindPoint(unsigned int id_p);
       bool IsAdjacent(Triangle &T,Edge &E){return T.Includes(E);}
@@ -148,6 +147,7 @@ namespace ProjectLibrary
       void AddCol(unsigned int id_tr, unsigned int id_edge);
       void DivideTriangle_base(unsigned int &n_theta);
       void DivideTriangle_advanced(unsigned int &n_theta);
+      void DivideTriangle_recoursive(Triangle &T, Point p1, Edge &Split1, Point p2, Edge &Split2, Point &old_m, unsigned int &n_theta);
       bool Extract(unsigned int id);
       unsigned int TopTheta();
   };
