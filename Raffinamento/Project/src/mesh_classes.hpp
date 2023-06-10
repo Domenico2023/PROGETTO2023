@@ -69,7 +69,7 @@ namespace ProjectLibrary
 
     Triangle() = default;
     Triangle(vector<Edge> edges, unsigned int id);
-    Triangle(const Triangle &T): points(T.points), edges(T.edges), id(T.id),area(T.area){}
+    Triangle(const Triangle &T): points(T.points), edges(T.edges), id(T.id), area(T.area){}
     Triangle& operator=(const Triangle &T){points=T.points; edges=T.edges; id=T.id; area=T.area; return *this;}
     bool Includes(const Edge E){for(Edge &edge : edges) if(edge==E) return true; return false;}
     bool Includes(const Point p){for(Point &pt : points) if(pt==p) return true; return false;}

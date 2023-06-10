@@ -32,7 +32,7 @@ namespace ProjectLibrary
       if(find(pts.begin(),pts.end(),edge.p2)==pts.end())
         pts.push_back(edge.p2);
     }
-    if(pts.size()>3 || edges[0]==edges[1] || edges[0]==edges[2] || edges[1]==edges[2]){cerr<<"Error: inconsistent triangle"; throw(1);}
+    if(pts.size()>3 || edges[0]==edges[1] || edges[0]==edges[2] || edges[1]==edges[2]){cerr<<"Error: inconsistent triangle"<<endl; throw(1);}
     array<Point,3> arr;
     for(unsigned int i=0;i<3;i++)
       arr[i]=pts[i];
@@ -49,14 +49,6 @@ namespace ProjectLibrary
     if(area<0){
       points={points[1], points[0], points[2]};
       area = abs(area);
-      // riordina i punti per lato più lungo
-//       while(!(this->edges[0].Includes(points[0]) && this->edges[0].Includes(points[1]))){
-//         Point tmp;
-//         tmp = points[0];
-//         points[0]=points[1];
-//         points[1]=points[2];
-//         points[2]=tmp;
-//       }
     }
   }
     //Find (Triangle)
@@ -187,6 +179,8 @@ namespace ProjectLibrary
   }
     //Export (Mesh)
   void TriangularMesh::ExportMesh(vector<short int> cells, string all){
+      //esporta la mesh raffinata.
+      //cells: 0 = cell0D , 1 = cell1D , 2 = cell2D
     if(all=="all") {cells.resize(3); cells={0,1,2};}
     ofstream file;
     int percentage = theta*100;
@@ -339,189 +333,13 @@ namespace ProjectLibrary
   bool TriangularMesh::Extract(unsigned int id){
       //estrae il triangolo con id=id dal vettore top_theta
     for(unsigned int i=0; i<top_theta.size(); i++){
-      if (id==top_theta[i].id){
+      if(id==top_theta[i].id){
         top_theta.erase(top_theta.begin()+i);
         return true;
       }
     }
     return false;
   }
-  void TriangularMesh::DivideTriangle_base(unsigned int &n_theta){
-      //divide il triangolo attuale (top_theta[0]) e quello adiacente al lato più lungo (se c'è)
-    Point medio;
-    Edge newEdgeAdd1,newEdgeSplit1, newEdgeSplit2;
-    Edge newEdgeAdd2;
-    Triangle newTriangle1,newTriangle2;
-    Triangle newTriangle3,newTriangle4;
-    unsigned int dnTriangles=nTriangles, dnEdges=nEdges, dnPoints=nPoints;
-
-    medio = top_theta[0].edges[0].Medium(dnPoints++);
-    AddPoint(medio);  //meglio aggiungerlo prima perché va inserito senza succ e prec
-    newEdgeAdd1 = Edge(top_theta[0].points[2],medio,dnEdges++);
-
-    newEdgeSplit1 = Edge(top_theta[0].points[0],medio,top_theta[0].edges[0].id);  //riutilizzo l'id del lato cancellato
-    newEdgeSplit2 = Edge(top_theta[0].points[1],medio,dnEdges++);
-    newTriangle1 = Triangle({newEdgeAdd1,newEdgeSplit1,FindEdge(top_theta[0].points[0],top_theta[0].points[2])}, top_theta[0].id);  //riutilizzo l'id del triangolo cancellato
-    newTriangle2 = Triangle({newEdgeAdd1,newEdgeSplit2,FindEdge(top_theta[0].points[1],top_theta[0].points[2])},dnTriangles++);
-
-    Triangle AdjTriangle=FindAdjacence(top_theta[0], top_theta[0].edges[0]);
-
-    if(AdjTriangle.id!=UINT_MAX){
-      //trovo il vertice opposto al lato
-      Point opposite(AdjTriangle.Opposite(top_theta[0].edges[0]));
-      newEdgeAdd2 = Edge(opposite, medio, dnEdges++);
-      newTriangle3 = Triangle({newEdgeAdd2, newEdgeSplit1, FindEdge(opposite, top_theta[0].points[0])}, AdjTriangle.id);  //riutilizzo l'id del triangolo cancellato
-      newTriangle4 = Triangle({newEdgeAdd2, newEdgeSplit2, FindEdge(opposite, top_theta[0].points[1])},dnTriangles++);
-    }
-    // modificare la matrice di adj e aggiungere i nuovi triangoli sia in mesh che in adj
-    // sostituzione dei pt, lati e triangoli
-    nPoints=dnPoints;
-
-    AddEdge(newEdgeAdd1);
-    AddEdge(newEdgeSplit2);
-    AddEdge(newEdgeSplit1, newEdgeSplit1.id);
-    if(AdjTriangle.id!=UINT_MAX)
-      AddEdge(newEdgeAdd2);
-    nEdges=dnEdges;
-
-    AddTriangle(newTriangle1, newTriangle1.id);
-    AddTriangle(newTriangle2);
-    if(AdjTriangle.id!=UINT_MAX){
-      AddTriangle(newTriangle3, newTriangle3.id);
-      AddTriangle(newTriangle4);
-    }
-    nTriangles=dnTriangles;
-
-    Edge tmp_e = FindEdge(top_theta[0].points[0],top_theta[0].points[2]);
-    ModifyRow(top_theta[0].id,newTriangle1.id,tmp_e.id);                     // è superfluo, nell'advanced non è scritto
-    tmp_e = FindEdge(top_theta[0].points[1],top_theta[0].points[2]);
-    ModifyRow(top_theta[0].id,newTriangle2.id,tmp_e.id);
-
-    InsertRow({newTriangle1.id, newTriangle2.id},newEdgeAdd1.id);
-    InsertRow({newTriangle1.id},newEdgeSplit1.id);
-    InsertRow({newTriangle2.id},newEdgeSplit2.id);
-    if(AdjTriangle.id!=UINT_MAX){
-      Point opposite(AdjTriangle.Opposite(top_theta[0].edges[0]));
-      tmp_e = FindEdge(top_theta[0].points[0],opposite);
-      ModifyRow(AdjTriangle.id,newTriangle3.id,tmp_e.id);
-      tmp_e = FindEdge(top_theta[0].points[1],opposite);
-      ModifyRow(AdjTriangle.id,newTriangle4.id,tmp_e.id);
-      InsertRow({newTriangle3.id, newTriangle4.id},newEdgeAdd2.id);
-      AddCol(newTriangle3.id,newEdgeSplit1.id);
-      AddCol(newTriangle4.id,newEdgeSplit2.id);
-    }
-    // elimino il primo triangolo
-    top_theta.erase(top_theta.begin()); n_theta--;
-    // elimino il secondo triangolo
-    if(Extract(AdjTriangle.id)) n_theta--;
-  }
-
-  // Advanced
-
-  void TriangularMesh::DivideTriangle_advanced(unsigned int &n_theta){
-      //divide il triangolo attuale (top_theta[0]) e quello adiacente al lato più lungo (se c'è)
-    Point medio;
-    Edge newEdgeAdd1,newEdgeSplit1, newEdgeSplit2;
-    Edge newEdgeAdd2;
-    Triangle newTriangle1,newTriangle2;
-    Triangle newTriangle3,newTriangle4;
-    unsigned int dnTriangles=nTriangles, dnEdges=nEdges, dnPoints=nPoints;
-
-    medio = top_theta[0].edges[0].Medium(dnPoints++);
-    AddPoint(medio);
-    newEdgeAdd1 = Edge(top_theta[0].points[2],medio,dnEdges++);
-    newEdgeSplit1 = Edge(top_theta[0].points[0],medio,top_theta[0].edges[0].id);  //riutilizzo l'id del lato cancellato
-    newEdgeSplit2 = Edge(top_theta[0].points[1],medio,dnEdges++);
-    newTriangle1 = Triangle({newEdgeAdd1,newEdgeSplit1,FindEdge(top_theta[0].points[0],top_theta[0].points[2])}, top_theta[0].id);  //riutilizzo l'id del triangolo cancellato
-    newTriangle2 = Triangle({newEdgeAdd1,newEdgeSplit2,FindEdge(top_theta[0].points[1],top_theta[0].points[2])},dnTriangles++);
-
-    Triangle AdjTriangle=FindAdjacence(top_theta[0], top_theta[0].edges[0]);
-
-    nPoints=dnPoints;
-    AddEdge(newEdgeAdd1);
-    AddEdge(newEdgeSplit1, newEdgeSplit1.id);
-    AddEdge(newEdgeSplit2);
-    nEdges=dnEdges;
-    AddTriangle(newTriangle1, newTriangle1.id);
-    AddTriangle(newTriangle2);
-    nTriangles=dnTriangles;
-
-    InsertRow({newTriangle1.id, newTriangle2.id},newEdgeAdd1.id);
-    InsertRow({newTriangle1.id},newEdgeSplit1.id);
-    InsertRow({newTriangle2.id},newEdgeSplit2.id);
-
-    Edge tmp_e = FindEdge(top_theta[0].points[1],top_theta[0].points[2]);
-    ModifyRow(top_theta[0].id,newTriangle2.id,tmp_e.id);
-
-    if(AdjTriangle.id!=UINT_MAX)
-        DivideTriangle_recoursive(AdjTriangle, top_theta[0].points[0], newEdgeSplit1, top_theta[0].points[1], newEdgeSplit2, medio, n_theta);
-
-  }
-  void TriangularMesh::DivideTriangle_recoursive(Triangle &T, Point p1, Edge &Split1, Point p2, Edge &Split2, Point &old_m, unsigned int &n_theta){
-
-      Edge newEdgeAdd1;
-      Triangle newTriangle1,newTriangle2;
-      Point opposite(T.Opposite(T.MaxEdge()));
-      unsigned int dnTriangles=nTriangles, dnEdges=nEdges, dnPoints=nPoints;
-
-      if(T.MaxEdge()==T.PointsToEdge(p1, p2)){
-          newEdgeAdd1 = Edge(opposite, old_m, dnEdges++);
-          newTriangle2 = Triangle({newEdgeAdd1, Split1, FindEdge(opposite, T.points[0])}, T.id);  //riutilizzo l'id del triangolo cancellato
-          newTriangle1 = Triangle({newEdgeAdd1, Split2, FindEdge(opposite, T.points[1])},dnTriangles++);
-
-          nPoints=dnPoints;
-          AddEdge(newEdgeAdd1);
-          nEdges=dnEdges;
-          AddTriangle(newTriangle2, newTriangle2.id);
-          AddTriangle(newTriangle1);
-          nTriangles=dnTriangles;
-
-          InsertRow({newTriangle2.id, newTriangle1.id},newEdgeAdd1.id);
-          Edge tmp_e = FindEdge(T.points[1],opposite);
-          ModifyRow(T.id,newTriangle1.id,tmp_e.id);
-          AddCol(newTriangle2.id,Split1.id);
-          AddCol(newTriangle1.id,Split2.id);
-
-          return;
-      }
-
-      Point new_m;
-      Edge newEdgeSplit1, newEdgeSplit2;
-      new_m = T.MaxEdge().Medium(dnPoints++);
-      AddPoint(new_m);
-
-      newEdgeAdd1 = Edge(opposite,new_m,dnEdges++);
-      newEdgeSplit1 = Edge(T.points[0],new_m,T.MaxEdge().id);  //riutilizzo l'id del lato cancellato
-      newEdgeSplit2 = Edge(T.points[1],new_m,dnEdges++);
-      newTriangle1 = Triangle({newEdgeAdd1,newEdgeSplit1,FindEdge(T.points[0],opposite)}, T.id);  //riutilizzo l'id del triangolo cancellato
-      newTriangle2 = Triangle({newEdgeAdd1,newEdgeSplit2,FindEdge(T.points[1],opposite)},dnTriangles++);
-
-      Triangle AdjTriangle=FindAdjacence(T, T.MaxEdge());
-
-      top_theta.erase(top_theta.begin()); n_theta--;
-
-
-
-      if(AdjTriangle.id!=UINT_MAX){
-          if(Extract(AdjTriangle.id)) n_theta--;
-          DivideTriangle_recoursive(AdjTriangle, T.MaxEdge().p1, newEdgeSplit1, T.MaxEdge().p2, newEdgeSplit2, new_m, n_theta);
-
-          Edge MtoM(new_m, old_m, dnEdges++);  // collego i punti in sospeso
-          Triangle newTriangle3({MtoM, newEdgeAdd1, Split1}, newTriangle2.id),newTriangle4({MtoM,newEdgeSplit2,Split2}, dnTriangles++);
-          AddEdge(MtoM);
-          nEdges=dnEdges;
-          AddTriangle(newTriangle3, newTriangle3.id);
-          AddTriangle(newTriangle4);
-          nTriangles=dnTriangles;
-          InsertRow({newTriangle3.id, newTriangle4.id},MtoM.id);
-          ModifyRow(T.id,newTriangle4.id,newEdgeSplit2.id);
-          ModifyRow(newTriangle1.id,newTriangle3.id,newEdgeAdd1.id);
-          AddCol(newTriangle3.id, Split1.id);
-          AddCol(newTriangle4.id, Split2.id);
-      }
-  }
-
-
   void TriangularMesh::Refining(double theta, string level){
     //chiama DivideTriangle finché non ha diviso tutti i triangoli del vettore top_theta
     this->theta = theta;
@@ -533,6 +351,186 @@ namespace ProjectLibrary
       else if(level=="advanced") DivideTriangle_advanced(n_theta);
       else {cerr<<"Error: invalid argument"<<endl; throw(1);}
     }
+  }
+  void TriangularMesh::DivideTriangle_base(unsigned int &n_theta){
+      //divide il triangolo attuale (top_theta[0]) e quello adiacente al lato più lungo (se c'è)
+    Point medio;
+    Edge newEdgeAdd1,newEdgeSplit1, newEdgeSplit2;
+    Edge newEdgeAdd2;
+    Triangle newTriangle1,newTriangle2, T(top_theta[0]);
+    Triangle newTriangle3,newTriangle4;
+//    unsigned int dnTriangles=nTriangles, dnEdges=nEdges, dnPoints=nPoints;
+
+    medio = T.MaxEdge().Medium(nPoints++);
+    AddPoint(medio);  //meglio aggiungerlo prima perché va inserito senza succ e prec
+    newEdgeAdd1 = Edge(T.points[2],medio,nEdges++);
+
+    newEdgeSplit1 = Edge(T.points[0],medio,T.MaxEdge().id);  //riutilizzo l'id del lato cancellato
+    newEdgeSplit2 = Edge(T.points[1],medio,nEdges++);
+    newTriangle1 = Triangle({newEdgeAdd1,newEdgeSplit1,T.PointsToEdge(T.points[0],T.points[2])}, T.id);  //riutilizzo l'id del triangolo cancellato
+    newTriangle2 = Triangle({newEdgeAdd1,newEdgeSplit2,T.PointsToEdge(T.points[1],T.points[2])}, nTriangles++);
+
+    Triangle AdjTriangle=FindAdjacence(T, T.MaxEdge());
+
+    if(AdjTriangle.id!=UINT_MAX){
+      //trovo il vertice opposto al lato
+      Point opposite(AdjTriangle.Opposite(T.MaxEdge()));
+      newEdgeAdd2 = Edge(opposite, medio, nEdges++);
+      newTriangle3 = Triangle({newEdgeAdd2, newEdgeSplit1, AdjTriangle.PointsToEdge(opposite, T.points[0])}, AdjTriangle.id);  //riutilizzo l'id del triangolo cancellato
+      newTriangle4 = Triangle({newEdgeAdd2, newEdgeSplit2, AdjTriangle.PointsToEdge(opposite, T.points[1])}, nTriangles++);
+    }
+    // modificare la matrice di adj e aggiungere i nuovi triangoli sia in mesh che in adj
+    // sostituzione dei pt, lati e triangoli
+
+//    nPoints=dnPoints;
+    AddEdge(newEdgeAdd1);
+    AddEdge(newEdgeSplit2);
+    AddEdge(newEdgeSplit1, newEdgeSplit1.id);
+    if(AdjTriangle.id!=UINT_MAX)
+      AddEdge(newEdgeAdd2);
+//    nEdges=dnEdges;
+
+    AddTriangle(newTriangle1, newTriangle1.id);
+    AddTriangle(newTriangle2);
+    if(AdjTriangle.id!=UINT_MAX){
+      AddTriangle(newTriangle3, newTriangle3.id);
+      AddTriangle(newTriangle4);
+    }
+//    nTriangles=dnTriangles;
+
+    Edge tmp_e = T.PointsToEdge(T.points[0],T.points[2]);
+    ModifyRow(T.id,newTriangle1.id,tmp_e.id);                     // è superfluo, nell'advanced non è scritto
+    tmp_e = T.PointsToEdge(T.points[1],T.points[2]);
+    ModifyRow(T.id,newTriangle2.id,tmp_e.id);
+
+    InsertRow({newTriangle1.id, newTriangle2.id},newEdgeAdd1.id);
+    InsertRow({newTriangle1.id},newEdgeSplit1.id);
+    InsertRow({newTriangle2.id},newEdgeSplit2.id);
+    if(AdjTriangle.id!=UINT_MAX){
+      Point opposite(AdjTriangle.Opposite(T.MaxEdge()));
+      tmp_e = AdjTriangle.PointsToEdge(T.points[0],opposite);
+      ModifyRow(AdjTriangle.id,newTriangle3.id,tmp_e.id);
+      tmp_e = AdjTriangle.PointsToEdge(T.points[1],opposite);
+      ModifyRow(AdjTriangle.id,newTriangle4.id,tmp_e.id);
+      InsertRow({newTriangle3.id, newTriangle4.id},newEdgeAdd2.id);
+      AddCol(newTriangle3.id,newEdgeSplit1.id);
+      AddCol(newTriangle4.id,newEdgeSplit2.id);
+    }
+    // elimino il primo triangolo
+    Extract(T.id); n_theta--;
+    // elimino il secondo triangolo
+    if(Extract(AdjTriangle.id)) n_theta--;
+  }
+    //Advanced
+  void TriangularMesh::DivideTriangle_advanced(unsigned int &n_theta){
+      //divide il triangolo attuale (top_theta[0]) e ricorre su quello adiacente al lato più lungo (se c'è)
+    Point medio;
+    Edge newEdgeAdd1,newEdgeSplit1, newEdgeSplit2;
+    Triangle newTriangle1,newTriangle2;
+    Triangle T(top_theta[0]);
+
+    medio = T.MaxEdge().Medium(nPoints++);
+    AddPoint(medio);
+    newEdgeAdd1 = Edge(T.points[2],medio,nEdges++);
+    newEdgeSplit1 = Edge(T.points[0],medio,T.MaxEdge().id);  //riutilizzo l'id del lato cancellato
+    newEdgeSplit2 = Edge(T.points[1],medio,nEdges++);
+    newTriangle1 = Triangle({newEdgeAdd1,newEdgeSplit1,T.PointsToEdge(T.points[0],T.points[2])}, T.id);  //riutilizzo l'id del triangolo cancellato
+    newTriangle2 = Triangle({newEdgeAdd1,newEdgeSplit2,T.PointsToEdge(T.points[1],T.points[2])}, nTriangles++);
+
+    Triangle AdjTriangle=FindAdjacence(T, T.MaxEdge());
+
+    AddEdge(newEdgeAdd1);
+    AddEdge(newEdgeSplit1, newEdgeSplit1.id);
+    AddEdge(newEdgeSplit2);
+    AddTriangle(newTriangle1, newTriangle1.id);
+    AddTriangle(newTriangle2);
+
+    InsertRow({newTriangle1.id, newTriangle2.id},newEdgeAdd1.id);
+    InsertRow({newTriangle1.id},newEdgeSplit1.id);
+    InsertRow({newTriangle2.id},newEdgeSplit2.id);
+    Edge tmp_e = T.PointsToEdge(T.points[1],T.points[2]);  //T.PointsToEdge è molto più ottimizzato rispetto a FindEdge
+    ModifyRow(T.id,newTriangle2.id,tmp_e.id);
+
+    Extract(T.id); n_theta--;
+
+    if(AdjTriangle.id!=UINT_MAX)
+      DivideTriangle_recoursive(AdjTriangle, T.points[0], newEdgeSplit1, T.points[1], newEdgeSplit2, medio, n_theta);
+  }
+  void TriangularMesh::DivideTriangle_recoursive(Triangle &T, Point p1, Edge &Split1, Point p2, Edge &Split2, Point &old_m, unsigned int &n_theta){
+      //divide il triangolo attuale e ricorre su quello adiacente al lato più lungo (se c'è)
+    Edge newEdgeAdd1;
+    Triangle newTriangle1,newTriangle2;
+    Point opposite(T.Opposite(T.MaxEdge()));
+
+    if(Extract(T.id)) n_theta--;
+
+    if(T.MaxEdge()==T.PointsToEdge(p1, p2)){
+      newEdgeAdd1 = Edge(opposite, old_m, nEdges++);
+      newTriangle1 = Triangle({newEdgeAdd1, Split1, T.PointsToEdge(opposite, T.points[1])}, T.id);  //riutilizzo l'id del triangolo cancellato
+      newTriangle2 = Triangle({newEdgeAdd1, Split2, T.PointsToEdge(opposite, T.points[0])}, nTriangles++);
+
+      AddEdge(newEdgeAdd1);
+      AddTriangle(newTriangle1, newTriangle1.id);
+      AddTriangle(newTriangle2);
+
+      InsertRow({newTriangle1.id, newTriangle2.id},newEdgeAdd1.id);
+      Edge tmp_e = T.PointsToEdge(T.points[0],opposite);
+      ModifyRow(T.id,newTriangle2.id,tmp_e.id);
+      AddCol(newTriangle1.id,Split1.id);
+      AddCol(newTriangle2.id,Split2.id);
+
+      return;
+    }
+
+    Point new_m;
+    Edge newEdgeSplit1, newEdgeSplit2;
+    new_m = T.MaxEdge().Medium(nPoints++);
+    AddPoint(new_m);
+
+    newEdgeAdd1 = Edge(opposite,new_m,nEdges++);
+    AddEdge(newEdgeAdd1);
+    newEdgeSplit1 = Edge(T.points[0],new_m,T.MaxEdge().id);  //riutilizzo l'id del lato cancellato
+    AddEdge(newEdgeSplit1, newEdgeSplit1.id);
+    newEdgeSplit2 = Edge(T.points[1],new_m,nEdges++);
+    AddEdge(newEdgeSplit2);
+    newTriangle1 = Triangle({newEdgeAdd1,newEdgeSplit1,T.PointsToEdge(T.points[0],opposite)}, T.id);  //riutilizzo l'id del triangolo cancellato
+    AddTriangle(newTriangle1, newTriangle1.id);
+    newTriangle2 = Triangle({newEdgeAdd1,newEdgeSplit2,T.PointsToEdge(T.points[1],opposite)},nTriangles++);
+    AddTriangle(newTriangle2);
+
+    InsertRow({newTriangle1.id, newTriangle2.id},newEdgeAdd1.id);
+    InsertRow({newTriangle1.id},newEdgeSplit1.id);
+    InsertRow({newTriangle2.id},newEdgeSplit2.id);
+  // aggiusto adiacenze di newTriangle2 (newTriangle1 non ha id nuovo)
+    if(!newTriangle2.Includes(p1)){
+      Edge tmp_e = T.PointsToEdge(T.points[1],T.points[2]);  //T.PointsToEdge è molto più ottimizzato rispetto a FindEdge
+      ModifyRow(T.id,newTriangle2.id,tmp_e.id);
+    }
+    Triangle AdjTriangle=FindAdjacence(T, T.MaxEdge());
+
+    if(AdjTriangle.id!=UINT_MAX)
+      DivideTriangle_recoursive(AdjTriangle, T.points[0], newEdgeSplit1, T.points[1], newEdgeSplit2, new_m, n_theta);
+
+    Edge MtoM(new_m, old_m, nEdges++);  // collego i punti in sospeso
+    AddEdge(MtoM);
+    Triangle newTriangle3, newTriangle4;
+    if(T.points[1]==p2){
+      newTriangle3 = Triangle({MtoM, newEdgeAdd1, Split1}, newTriangle2.id);
+      newTriangle4 = Triangle({MtoM,newEdgeSplit2,Split2}, nTriangles++);
+      ModifyRow(newTriangle2.id,newTriangle4.id,newEdgeSplit2.id);
+    }
+    else{
+      newTriangle3 = Triangle({MtoM, newEdgeSplit1, Split1}, newTriangle1.id);
+      newTriangle4 = Triangle({MtoM,newEdgeAdd1,Split2}, nTriangles++);
+      ModifyRow(newTriangle1.id,newTriangle4.id,newEdgeAdd1.id);
+    }
+    AddTriangle(newTriangle3, newTriangle3.id);
+    AddTriangle(newTriangle4);
+    InsertRow({newTriangle3.id, newTriangle4.id},MtoM.id);
+//    ModifyRow(T.id,newTriangle4.id,newEdgeSplit2.id);
+//    ModifyRow(newTriangle1.id,newTriangle3.id,newEdgeAdd1.id);
+    AddCol(newTriangle3.id, Split1.id);
+    AddCol(newTriangle4.id, Split2.id);
   }
 }
 
