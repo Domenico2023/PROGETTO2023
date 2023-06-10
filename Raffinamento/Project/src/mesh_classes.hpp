@@ -115,11 +115,12 @@ namespace ProjectLibrary
       vector<Triangle> top_theta; //si può ottimizzare salvando solo gli id
       double theta;
       short int test;
+      string level;
 
     public:
       TriangularMesh() = default;
       TriangularMesh(const string cell0D, const string cell1D, const string cell2D, short int test);
-      void Refining(double theta, vector<string> level={"base"});
+      void Refining(double theta, string level="base");
       void AddPoint(Point point, unsigned int indice=UINT_MAX);
       void AddEdge(Edge edge, unsigned int indice=UINT_MAX);
       void AddTriangle(Triangle triangle, unsigned int indice=UINT_MAX);

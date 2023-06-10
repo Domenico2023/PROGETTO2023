@@ -191,19 +191,19 @@ namespace ProjectLibrary
     ofstream file;
     int percentage = theta*100;
     if(find(cells.begin(),cells.end(),0)!=cells.end()){
-      string cell0D = "./../Project/Dataset/Test"+to_string(test)+"Completed/New0D_t"+to_string(percentage)+".csv";
+      string cell0D = "./../Project/Dataset/Test"+to_string(test)+"Completed/New0D"+level+"_t"+to_string(percentage)+".csv";
       file.open(cell0D);
       if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);}
       ExportCell0D(file); file.close();
     }
     if(find(cells.begin(),cells.end(),1)!=cells.end()){
-      string cell1D = "./../Project/Dataset/Test"+to_string(test)+"Completed/New1D_t"+to_string(percentage)+".csv";
+      string cell1D = "./../Project/Dataset/Test"+to_string(test)+"Completed/New1D"+level+"_t"+to_string(percentage)+".csv";
       file.open(cell1D);
       if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);}
       ExportCell1D(file); file.close();
     }
     if(find(cells.begin(),cells.end(),2)!=cells.end()){
-      string cell2D = "./../Project/Dataset/Test"+to_string(test)+"Completed/New2D_t"+to_string(percentage)+".csv";
+      string cell2D = "./../Project/Dataset/Test"+to_string(test)+"Completed/New2D"+level+"_t"+to_string(percentage)+".csv";
       file.open(cell2D);
       if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);}
       ExportCell2D(file); file.close();
@@ -216,7 +216,7 @@ namespace ProjectLibrary
   void TriangularMesh::ExportParaviewfile(){
     ofstream file;
     int percentage = theta*100;
-    string cellParaview = "./../Project/Dataset/Test"+to_string(test)+"Completed/newParaview_t"+to_string(percentage)+".csv";
+    string cellParaview = "./../Project/Dataset/Test"+to_string(test)+"Completed/NewParaview"+level+"_t"+to_string(percentage)+".csv";
     file.open(cellParaview);
     if(file.fail()){cerr<<"Error in export file paraview"<<endl; throw(1);}
     file<<"Id Id_p1 p1x p1y Id_p2 p2x p2y"<<endl;
@@ -226,7 +226,7 @@ namespace ProjectLibrary
   void TriangularMesh::ExportVTK(){
     ofstream file;
     int percentage = theta*100;
-    string path = "./../Project/Dataset/Test"+to_string(test)+"Completed/newVTK_t"+to_string(percentage)+".vtk";
+    string path = "./../Project/Dataset/Test"+to_string(test)+"Completed/newVTK"+level+"_t"+to_string(percentage)+".vtk";
     file.open(path);
     if(file.fail()){cerr<<"Error in export VTK file"<<endl; throw(1);}
     file<<"# vtk DataFile Version 3.0"<<endl<<"vtk file_t"<<to_string(percentage)<<endl<<"ASCII"<<endl<<"DATASET POLYDATA"<<endl<<endl;
@@ -240,7 +240,7 @@ namespace ProjectLibrary
   }
   void TriangularMesh::ExportMatrix(){
     ofstream file;
-    string matrix = "./../Project/Dataset/Test"+to_string(test)+"Completed/matrix.csv";
+    string matrix = "./../Project/Dataset/Test"+to_string(test)+"Completed/matrix_"+level+".csv";
     file.open(matrix);
     if(file.fail()){cerr<<"Error in export matrix"<<endl; throw(1);}
     unsigned int edge_id=0;
@@ -522,16 +522,16 @@ namespace ProjectLibrary
   }
 
 
-  void TriangularMesh::Refining(double theta, vector<string> level){
+  void TriangularMesh::Refining(double theta, string level){
     //chiama DivideTriangle finché non ha diviso tutti i triangoli del vettore top_theta
     this->theta = theta;
+    this->level = level;
     unsigned int n_theta = TopTheta();
     // per ogni triangolo in top_theta:  dividi_triangolo (e ricalcola adiacenze)
     while(n_theta > 0){
-      if(find_if(level.begin(), level.end(), [](string &str){return str=="base";})!=level.end())
-        DivideTriangle_base(n_theta);
-      if(find_if(level.begin(), level.end(), [](string &str){return str=="advanced";})!=level.end())
-        DivideTriangle_advanced(n_theta);
+      if(level=="base") DivideTriangle_base(n_theta);
+      else if(level=="advanced") DivideTriangle_advanced(n_theta);
+      else {cerr<<"Error: invalid argument"<<endl; throw(1);}
     }
   }
 }

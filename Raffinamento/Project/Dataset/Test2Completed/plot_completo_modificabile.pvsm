@@ -1,6 +1,7 @@
 # per cambiare plot sostituire i nomi dei file:		#con CTRL+F è più rapido sostituire tutto
-# per i lati : newParaview_t20 , newParaview_t50 , newParaview_t70
-# per i punti : New0D_t20 , New0D_t50 , New0D_t70
+# per i lati : NewParaviewbase_t20 , NewParaviewbase_t50 , NewParaviewbase_t70
+# per i punti : New0Dbase_t20 , New0Dbase_t50 , New0Dbase_t70
+# la parola "base" può essere sostituita con "advanced"
 # P.S. qualunque altro valore percentuale oltre a 20, 50 e 70 va bene (basta prima creare i file con il codice C++ di Raffinamento Mesh)
 
 <ParaView>
@@ -7400,11 +7401,11 @@
     </Proxy>
     <Proxy group="sources" type="CSVReader" id="9613" servers="1">
       <Property name="FileName" id="9613.FileName" number_of_elements="1">
-        <Element index="0" value="C:\Users\utente\Desktop\PCS2023_Exercises\Raffinamento\Project\Dataset\Test2Completed\New0D_t20.csv"/>
+        <Element index="0" value="C:\Users\utente\Desktop\PCS2023_Exercises\Raffinamento\Project\Dataset\Test2Completed\New0Dbase_t20.csv"/>
         <Domain name="files" id="9613.FileName.files"/>
       </Property>
       <Property name="FileNameInfo" id="9613.FileNameInfo" number_of_elements="1">
-        <Element index="0" value="C:\Users\utente\Desktop\PCS2023_Exercises\Raffinamento\Project\Dataset\Test2Completed\New0D_t20.csv"/>
+        <Element index="0" value="C:\Users\utente\Desktop\PCS2023_Exercises\Raffinamento\Project\Dataset\Test2Completed\New0Dbase_t20.csv"/>
       </Property>
       <Property name="TimestepValues" id="9613.TimestepValues"/>
       <Property name="AddTabFieldDelimiter" id="9613.AddTabFieldDelimiter" number_of_elements="1">
@@ -7433,11 +7434,11 @@
     </Proxy>
     <Proxy group="sources" type="CSVReader" id="8954" servers="1">
       <Property name="FileName" id="8954.FileName" number_of_elements="1">
-        <Element index="0" value="C:\Users\utente\Desktop\PCS2023_Exercises\Raffinamento\Project\Dataset\Test2Completed\newParaview_t20.csv"/>
+        <Element index="0" value="C:\Users\utente\Desktop\PCS2023_Exercises\Raffinamento\Project\Dataset\Test2Completed\NewParaviewbase_t20.csv"/>
         <Domain name="files" id="8954.FileName.files"/>
       </Property>
       <Property name="FileNameInfo" id="8954.FileNameInfo" number_of_elements="1">
-        <Element index="0" value="C:\Users\utente\Desktop\PCS2023_Exercises\Raffinamento\Project\Dataset\Test2Completed\newParaview_t20.csv"/>
+        <Element index="0" value="C:\Users\utente\Desktop\PCS2023_Exercises\Raffinamento\Project\Dataset\Test2Completed\NewParaviewbase_t20.csv"/>
       </Property>
       <Property name="TimestepValues" id="8954.TimestepValues"/>
       <Property name="AddTabFieldDelimiter" id="8954.AddTabFieldDelimiter" number_of_elements="1">
@@ -8167,8 +8168,8 @@
       <Item id="9347" name="Lines" logname="Lines"/>
       <Item id="9110" name="TableToPoints1" logname="TableToPoints1"/>
       <Item id="9637" name="Points" logname="Points"/>
-      <Item id="9613" name="New0D_t20.csv" logname="New0D_t20.csv"/>
-      <Item id="8954" name="newParaview_t20.csv" logname="newParaview_t20.csv"/>
+      <Item id="9613" name="New0Dbase_t20.csv" logname="New0Dbase_t20.csv"/>
+      <Item id="8954" name="NewParaviewbase_t20.csv" logname="NewParaviewbase_t20.csv"/>
     </ProxyCollection>
     <ProxyCollection name="timekeeper">
       <Item id="256" name="TimeKeeper1"/>
