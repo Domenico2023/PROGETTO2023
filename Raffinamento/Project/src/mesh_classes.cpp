@@ -332,12 +332,13 @@ namespace ProjectLibrary
   }
   bool TriangularMesh::Extract(unsigned int id){
       //estrae il triangolo con id=id dal vettore top_theta
-    for(unsigned int i=0; i<top_theta.size(); i++){
-      if(id==top_theta[i].id){
-        top_theta.erase(top_theta.begin()+i);
-        return true;
+    if(triangles[id].area>=top_theta[-1].area)
+      for(unsigned int i=0; i<top_theta.size(); i++){
+        if(id==top_theta[i].id){
+          top_theta.erase(top_theta.begin()+i);
+          return true;
+        }
       }
-    }
     return false;
   }
   void TriangularMesh::Refining(double theta, string level){
@@ -498,6 +499,8 @@ namespace ProjectLibrary
     newTriangle2 = Triangle({newEdgeAdd1,newEdgeSplit2,T.PointsToEdge(T.points[1],opposite)},nTriangles++);
     AddTriangle(newTriangle2);
 
+    Triangle AdjTriangle=FindAdjacence(T, T.MaxEdge());
+
     InsertRow({newTriangle1.id, newTriangle2.id},newEdgeAdd1.id);
     InsertRow({newTriangle1.id},newEdgeSplit1.id);
     InsertRow({newTriangle2.id},newEdgeSplit2.id);
@@ -506,7 +509,6 @@ namespace ProjectLibrary
       Edge tmp_e = T.PointsToEdge(T.points[1],T.points[2]);  //T.PointsToEdge è molto più ottimizzato rispetto a FindEdge
       ModifyRow(T.id,newTriangle2.id,tmp_e.id);
     }
-    Triangle AdjTriangle=FindAdjacence(T, T.MaxEdge());
 
     if(AdjTriangle.id!=UINT_MAX)
       DivideTriangle_recoursive(AdjTriangle, T.points[0], newEdgeSplit1, T.points[1], newEdgeSplit2, new_m, n_theta);
