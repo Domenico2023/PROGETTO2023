@@ -114,13 +114,15 @@ namespace ProjectLibrary
       vector<vector<unsigned int>> adjacent;
       vector<Triangle> top_theta; //si può ottimizzare salvando solo gli id
       double theta;
+      unsigned int n_theta;
       short int test;
       string level;
+      string uniformity="";
 
     public:
       TriangularMesh() = default;
       TriangularMesh(const string cell0D, const string cell1D, const string cell2D, short int test);
-      void Refining(double theta, string level="base");
+      void Refining(double theta, string level="base", string uniformity="non-uniform");
       void AddPoint(Point point, unsigned int indice=UINT_MAX);
       void AddEdge(Edge edge, unsigned int indice=UINT_MAX);
       void AddTriangle(Triangle triangle, unsigned int indice=UINT_MAX);
@@ -146,10 +148,11 @@ namespace ProjectLibrary
       void InsertRow(const vector<unsigned int> &t, unsigned int id_edge=UINT_MAX);
       void ModifyRow(unsigned int id_t_old, unsigned int id_t_new, unsigned int id_edge);
       void AddCol(unsigned int id_tr, unsigned int id_edge);
-      void DivideTriangle_base(unsigned int &n_theta);
-      void DivideTriangle_advanced(unsigned int &n_theta);
-      void DivideTriangle_recoursive(Triangle &T, Point p1, Edge &Split1, Point p2, Edge &Split2, Point &old_m, unsigned int &n_theta);
+      void DivideTriangle_base();
+      void DivideTriangle_advanced();
+      void DivideTriangle_recoursive(Triangle &T, Point p1, Edge &Split1, Point p2, Edge &Split2, Point &old_m);
       bool Extract(unsigned int id);
+      bool Insert(Triangle &T1);
       unsigned int TopTheta();
   };
 

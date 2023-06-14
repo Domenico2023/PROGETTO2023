@@ -7,6 +7,7 @@
 
 using namespace std;
 using namespace SortLibrary;
+using namespace InsertLibrary;
 
 namespace ProjectLibrary
 {
@@ -181,23 +182,24 @@ namespace ProjectLibrary
   void TriangularMesh::ExportMesh(vector<short int> cells, string all){
       //esporta la mesh raffinata.
       //cells: 0 = cell0D , 1 = cell1D , 2 = cell2D
+    string level=this->level + ((this->level.empty())? "" : "/");
     if(all=="all") {cells.resize(3); cells={0,1,2};}
     ofstream file;
     int percentage = theta*100;
     if(find(cells.begin(),cells.end(),0)!=cells.end()){
-      string cell0D = "./../Project/Dataset/Test"+to_string(test)+"Completed/New0D"+level+"_t"+to_string(percentage)+".csv";
+      string cell0D = "./../Project/Dataset/Test"+to_string(test)+"Completed/"+level+"New0D"+uniformity+"_t"+to_string(percentage)+".csv";
       file.open(cell0D);
       if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);}
       ExportCell0D(file); file.close();
     }
     if(find(cells.begin(),cells.end(),1)!=cells.end()){
-      string cell1D = "./../Project/Dataset/Test"+to_string(test)+"Completed/New1D"+level+"_t"+to_string(percentage)+".csv";
+      string cell1D = "./../Project/Dataset/Test"+to_string(test)+"Completed/"+level+"New1D"+uniformity+"_t"+to_string(percentage)+".csv";
       file.open(cell1D);
       if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);}
       ExportCell1D(file); file.close();
     }
     if(find(cells.begin(),cells.end(),2)!=cells.end()){
-      string cell2D = "./../Project/Dataset/Test"+to_string(test)+"Completed/New2D"+level+"_t"+to_string(percentage)+".csv";
+      string cell2D = "./../Project/Dataset/Test"+to_string(test)+"Completed/"+level+"New2D"+uniformity+"_t"+to_string(percentage)+".csv";
       file.open(cell2D);
       if(file.fail()){cerr<<"Error in export file"<<endl; throw(1);}
       ExportCell2D(file); file.close();
@@ -210,7 +212,8 @@ namespace ProjectLibrary
   void TriangularMesh::ExportParaviewfile(){
     ofstream file;
     int percentage = theta*100;
-    string cellParaview = "./../Project/Dataset/Test"+to_string(test)+"Completed/NewParaview"+level+"_t"+to_string(percentage)+".csv";
+    string level=this->level + ((this->level.empty())? "" : "/");
+    string cellParaview = "./../Project/Dataset/Test"+to_string(test)+"Completed/"+level+"NewParaview"+uniformity+"_t"+to_string(percentage)+".csv";
     file.open(cellParaview);
     if(file.fail()){cerr<<"Error in export file paraview"<<endl; throw(1);}
     file<<"Id Id_p1 p1x p1y Id_p2 p2x p2y"<<endl;
@@ -220,7 +223,8 @@ namespace ProjectLibrary
   void TriangularMesh::ExportVTK(){
     ofstream file;
     int percentage = theta*100;
-    string path = "./../Project/Dataset/Test"+to_string(test)+"Completed/newVTK"+level+"_t"+to_string(percentage)+".vtk";
+    string level=this->level + ((this->level.empty())? "" : "/");
+    string path = "./../Project/Dataset/Test"+to_string(test)+"Completed/"+level+"newVTK"+uniformity+"_t"+to_string(percentage)+".vtk";
     file.open(path);
     if(file.fail()){cerr<<"Error in export VTK file"<<endl; throw(1);}
     file<<"# vtk DataFile Version 3.0"<<endl<<"vtk file_t"<<to_string(percentage)<<endl<<"ASCII"<<endl<<"DATASET POLYDATA"<<endl<<endl;
@@ -234,7 +238,8 @@ namespace ProjectLibrary
   }
   void TriangularMesh::ExportMatrix(){
     ofstream file;
-    string matrix = "./../Project/Dataset/Test"+to_string(test)+"Completed/matrix_"+level+".csv";
+    string level=this->level + ((this->level.empty())? "" : "/");
+    string matrix = "./../Project/Dataset/Test"+to_string(test)+"Completed/"+level+"matrix_"+uniformity+".csv";
     file.open(matrix);
     if(file.fail()){cerr<<"Error in export matrix"<<endl; throw(1);}
     unsigned int edge_id=0;
@@ -325,7 +330,7 @@ namespace ProjectLibrary
       //salva i primi n_theta triangoli ordinati per area in n_theta e ne restituisce il numero
     vector<Triangle> sorted_vec = triangles;
     MSort(sorted_vec);
-    unsigned int n_theta = round(theta*nTriangles);
+    n_theta = round(theta*nTriangles);
     top_theta.resize(n_theta);
     top_theta = {sorted_vec.begin(), sorted_vec.begin()+n_theta};
     return n_theta;
@@ -333,27 +338,36 @@ namespace ProjectLibrary
   bool TriangularMesh::Extract(unsigned int id){
       //estrae il triangolo con id=id dal vettore top_theta
     if(triangles[id].area>=top_theta[-1].area)
-      for(unsigned int i=0; i<top_theta.size(); i++){
+      for(unsigned int i=0; i<n_theta; i++){
         if(id==top_theta[i].id){
           top_theta.erase(top_theta.begin()+i);
+          n_theta--;
           return true;
         }
       }
     return false;
   }
-  void TriangularMesh::Refining(double theta, string level){
+  bool TriangularMesh::Insert(Triangle &T1){
+    if(!top_theta.empty() && T1.area>top_theta[-1].area){
+      OrdInsert<Triangle>(top_theta,T1);
+      return true;
+    }
+    return false;
+  }
+  void TriangularMesh::Refining(double theta, string level, string uniformity){
     //chiama DivideTriangle finché non ha diviso tutti i triangoli del vettore top_theta
     this->theta = theta;
     this->level = level;
-    unsigned int n_theta = TopTheta();
+    this->uniformity = uniformity;
+    TopTheta();
     // per ogni triangolo in top_theta:  dividi_triangolo (e ricalcola adiacenze)
     while(n_theta > 0){
-      if(level=="base") DivideTriangle_base(n_theta);
-      else if(level=="advanced") DivideTriangle_advanced(n_theta);
+      if(level=="base") DivideTriangle_base();
+      else if(level=="advanced") DivideTriangle_advanced();
       else {cerr<<"Error: invalid argument"<<endl; throw(1);}
     }
   }
-  void TriangularMesh::DivideTriangle_base(unsigned int &n_theta){
+  void TriangularMesh::DivideTriangle_base(){
       //divide il triangolo attuale (top_theta[0]) e quello adiacente al lato più lungo (se c'è)
     Point medio;
     Edge newEdgeAdd1,newEdgeSplit1, newEdgeSplit2;
@@ -383,7 +397,11 @@ namespace ProjectLibrary
     Edge tmp_e = T.PointsToEdge(T.points[1],T.points[2]);  //T.PointsToEdge è molto più ottimizzato rispetto a FindEdge
     ModifyRow(T.id,newTriangle2.id,tmp_e.id);
     // elimino il primo triangolo
-    Extract(T.id); n_theta--;
+    Extract(T.id);
+    if(uniformity=="uniform"){
+      Insert(newTriangle1);
+      Insert(newTriangle2);
+    }
 
     if(AdjTriangle.id!=UINT_MAX){
       //trovo il vertice opposto al lato
@@ -401,11 +419,16 @@ namespace ProjectLibrary
       ModifyRow(AdjTriangle.id,newTriangle4.id,tmp_e.id);
       AddCol(newTriangle3.id,newEdgeSplit1.id);
       AddCol(newTriangle4.id,newEdgeSplit2.id);
-      if(Extract(AdjTriangle.id)) n_theta--;
+      // elimino il secondo triangolo, se è nella lista
+      Extract(AdjTriangle.id);
+      if(uniformity=="uniform"){
+        Insert(newTriangle3);
+        Insert(newTriangle4);
+      }
     }
   }
     //Advanced
-  void TriangularMesh::DivideTriangle_advanced(unsigned int &n_theta){
+  void TriangularMesh::DivideTriangle_advanced(){
       //divide il triangolo attuale (top_theta[0]) e ricorre su quello adiacente al lato più lungo (se c'è)
     Point medio;
     Edge newEdgeAdd1,newEdgeSplit1, newEdgeSplit2;
@@ -434,23 +457,31 @@ namespace ProjectLibrary
     Edge tmp_e = T.PointsToEdge(T.points[1],T.points[2]);  //T.PointsToEdge è molto più ottimizzato rispetto a FindEdge
     ModifyRow(T.id,newTriangle2.id,tmp_e.id);
 
-    Extract(T.id); n_theta--;
+    Extract(T.id);
+    if(uniformity=="uniform"){
+      Insert(newTriangle1);
+      Insert(newTriangle2);
+    }
 
     if(AdjTriangle.id!=UINT_MAX)
-      DivideTriangle_recoursive(AdjTriangle, T.points[0], newEdgeSplit1, T.points[1], newEdgeSplit2, medio, n_theta);
+      DivideTriangle_recoursive(AdjTriangle, T.points[0], newEdgeSplit1, T.points[1], newEdgeSplit2, medio);
   }
-  void TriangularMesh::DivideTriangle_recoursive(Triangle &T, Point p1, Edge &Split1, Point p2, Edge &Split2, Point &old_m, unsigned int &n_theta){
+  void TriangularMesh::DivideTriangle_recoursive(Triangle &T, Point p1, Edge &Split1, Point p2, Edge &Split2, Point &old_m){
       //divide il triangolo attuale e ricorre su quello adiacente al lato più lungo (se c'è)
     Edge newEdgeAdd1;
     Triangle newTriangle1,newTriangle2;
     Point opposite(T.Opposite(T.MaxEdge()));
 
-    if(Extract(T.id)) n_theta--;
+    Extract(T.id);
 
     if(T.MaxEdge()==T.PointsToEdge(p1, p2)){
       newEdgeAdd1 = Edge(opposite, old_m, nEdges++);
       newTriangle1 = Triangle({newEdgeAdd1, Split1, T.PointsToEdge(opposite, T.points[1])}, T.id);  //riutilizzo l'id del triangolo cancellato
       newTriangle2 = Triangle({newEdgeAdd1, Split2, T.PointsToEdge(opposite, T.points[0])}, nTriangles++);
+      if(uniformity=="uniform"){
+        Insert(newTriangle1);
+        Insert(newTriangle2);
+      }
 
       AddEdge(newEdgeAdd1);
       AddTriangle(newTriangle1, newTriangle1.id);
@@ -480,6 +511,10 @@ namespace ProjectLibrary
     AddTriangle(newTriangle1, newTriangle1.id);
     newTriangle2 = Triangle({newEdgeAdd1,newEdgeSplit2,T.PointsToEdge(T.points[1],opposite)},nTriangles++);
     AddTriangle(newTriangle2);
+    if(uniformity=="uniform"){
+      Insert(newTriangle1);
+      Insert(newTriangle2);
+    }
 
     Triangle AdjTriangle=FindAdjacence(T, T.MaxEdge());
 
@@ -493,7 +528,7 @@ namespace ProjectLibrary
     }
 
     if(AdjTriangle.id!=UINT_MAX)
-      DivideTriangle_recoursive(AdjTriangle, T.points[0], newEdgeSplit1, T.points[1], newEdgeSplit2, new_m, n_theta);
+      DivideTriangle_recoursive(AdjTriangle, T.points[0], newEdgeSplit1, T.points[1], newEdgeSplit2, new_m);
 
     Edge MtoM(new_m, old_m, nEdges++);  // collego i punti in sospeso
     AddEdge(MtoM);

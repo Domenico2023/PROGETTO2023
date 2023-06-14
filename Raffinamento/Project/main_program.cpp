@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
   for(double &percentage : theta){
     for(short int &t : test){
       TriangularMesh M("Cell0Ds.csv","Cell1Ds.csv","Cell2Ds.csv",t);
-      M.Refining(percentage,"base");
+      M.Refining(percentage);
       M.ExportMesh({0});
       M.ExportParaviewfile();
       M.ExportVTK();
