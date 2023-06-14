@@ -148,6 +148,7 @@ namespace ProjectLibrary
       void InsertRow(const vector<unsigned int> &t, unsigned int id_edge=UINT_MAX);
       void ModifyRow(unsigned int id_t_old, unsigned int id_t_new, unsigned int id_edge);
       void AddCol(unsigned int id_tr, unsigned int id_edge);
+      void DivideTriangle();
       void DivideTriangle_base();
       void DivideTriangle_advanced();
       void DivideTriangle_recoursive(Triangle &T, Point p1, Edge &Split1, Point p2, Edge &Split2, Point &old_m);
