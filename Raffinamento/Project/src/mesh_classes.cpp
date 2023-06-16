@@ -41,7 +41,7 @@ namespace ProjectLibrary
   }
   Triangle::Triangle(vector<Edge> edges, unsigned int id): id(id){
       //costruisce il triangolo. controlla consistenza (in EdgesToPoints)
-    MSort(edges);  // default : ordine decrescente
+    MSort<Edge>(edges);  // default : ordine decrescente
     this->edges = edges;
     points=EdgesToPoints();
 
@@ -329,7 +329,7 @@ namespace ProjectLibrary
   unsigned int TriangularMesh::TopTheta(){
       //salva i primi n_theta triangoli ordinati per area in n_theta e ne restituisce il numero
     vector<Triangle> sorted_vec = triangles;
-    MSort(sorted_vec);
+    MSort<Triangle>(sorted_vec);
     n_theta = round(theta*nTriangles);
     top_theta.resize(n_theta);
     top_theta = {sorted_vec.begin(), sorted_vec.begin()+n_theta};
@@ -347,9 +347,10 @@ namespace ProjectLibrary
       }
     return false;
   }
-  bool TriangularMesh::Insert(Triangle &T1){
-    if(!top_theta.empty() && T1.area>top_theta[-1].area){
-      SortInsert<Triangle>(top_theta,T1);
+  bool TriangularMesh::Insert(Triangle &T){
+    if(!top_theta.empty() && T.area>top_theta[-1].area){
+      SortInsert<Triangle>(top_theta,T);
+      top_theta.pop_back();
       return true;
     }
     return false;

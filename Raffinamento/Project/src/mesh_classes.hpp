@@ -153,7 +153,7 @@ namespace ProjectLibrary
       void DivideTriangle_advanced();
       void DivideTriangle_recursive(Triangle &T, Point p1, Edge &Split1, Point p2, Edge &Split2, Point &old_m);
       bool Extract(unsigned int id);
-      bool Insert(Triangle &T1);
+      bool Insert(Triangle &T);
       unsigned int TopTheta();
   };
 
