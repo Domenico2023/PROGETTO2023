@@ -58,7 +58,7 @@ namespace SortLibrary {
 namespace InsertLibrary {
 
   template<typename T>
-  void OrdInsert(vector<T>& v, T &elt);  //, string from="bottom");
+  void SortInsert(vector<T>& v, T &elt);  //, string from="bottom");
 
   template<typename T>
   void SortInsert(vector<T>& v, T &elt){
