@@ -349,7 +349,7 @@ namespace ProjectLibrary
   }
   bool TriangularMesh::Insert(Triangle &T1){
     if(!top_theta.empty() && T1.area>top_theta[-1].area){
-      OrdInsert<Triangle>(top_theta,T1);
+      SortInsert<Triangle>(top_theta,T1);
       return true;
     }
     return false;
@@ -402,7 +402,7 @@ namespace ProjectLibrary
 
     if(AdjTriangle.id!=UINT_MAX){
       if(level=="advanced")
-        DivideTriangle_recoursive(AdjTriangle, T.points[0], newEdgeSplit1, T.points[1], newEdgeSplit2, medio);
+        DivideTriangle_recursive(AdjTriangle, T.points[0], newEdgeSplit1, T.points[1], newEdgeSplit2, medio);
       else{
         Edge newEdgeAdd2;
         Triangle newTriangle3,newTriangle4;
@@ -526,9 +526,9 @@ namespace ProjectLibrary
     }
 
     if(AdjTriangle.id!=UINT_MAX)
-      DivideTriangle_recoursive(AdjTriangle, T.points[0], newEdgeSplit1, T.points[1], newEdgeSplit2, medio);
+      DivideTriangle_recursive(AdjTriangle, T.points[0], newEdgeSplit1, T.points[1], newEdgeSplit2, medio);
   }
-  void TriangularMesh::DivideTriangle_recoursive(Triangle &T, Point p1, Edge &Split1, Point p2, Edge &Split2, Point &old_m){
+  void TriangularMesh::DivideTriangle_recursive(Triangle &T, Point p1, Edge &Split1, Point p2, Edge &Split2, Point &old_m){
       //divide il triangolo attuale e ricorre su quello adiacente al lato più lungo (se c'è)
     Edge newEdgeAdd1;
     Triangle newTriangle1,newTriangle2;
@@ -590,7 +590,7 @@ namespace ProjectLibrary
     }
 
     if(AdjTriangle.id!=UINT_MAX)
-      DivideTriangle_recoursive(AdjTriangle, T.points[0], newEdgeSplit1, T.points[1], newEdgeSplit2, new_m);
+      DivideTriangle_recursive(AdjTriangle, T.points[0], newEdgeSplit1, T.points[1], newEdgeSplit2, new_m);
 
     Edge MtoM(new_m, old_m, nEdges++);  // collego i punti in sospeso
     AddEdge(MtoM);

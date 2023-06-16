@@ -61,7 +61,7 @@ namespace InsertLibrary {
   void OrdInsert(vector<T>& v, T &elt);  //, string from="bottom");
 
   template<typename T>
-  void OrdInsert(vector<T>& v, T &elt){
+  void SortInsert(vector<T>& v, T &elt){
 //    bool top=(from=="top")? true : false;
 //    for(int i=top*v.size()-1; i>=0 && i<v.size();i+=(2*top-1)){
 //      if() ...
