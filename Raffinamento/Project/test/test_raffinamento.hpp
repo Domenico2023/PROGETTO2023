@@ -39,6 +39,8 @@ TEST(TestInsert, TestInsertFalse)
   vector<int> v = {48, 48, 44, 43, 37, 31, 27, 25, 25, 18, 10}, v2;
   v2 = v;
   int x = 5;
+  v.resize(v.size()+1);
+  v[v.size()-1]=x;
   SortInsert(v2,x);
   EXPECT_EQ(v, v2);
 }
@@ -48,10 +50,9 @@ TEST(TestInsert, TestInsertTrue)
   v2 = v;
   v3 = v;
   int x = 28;
-  v3[10]=v3[9];
-  v3[9]=v3[8];
-  v3[8]=v3[7];
-  v3[7]=v3[6];
+  v3.resize(v3.size()+1);
+  for(unsigned int i=v3.size()-1;i>6;i--)
+    v3[i] = v3[i-1];
   v3[6]=x;
   SortInsert(v2,x);
   EXPECT_EQ(v3, v2);

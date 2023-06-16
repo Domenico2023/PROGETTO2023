@@ -66,17 +66,17 @@ namespace InsertLibrary {
 //    for(int i=top*v.size()-1; i>=0 && i<v.size();i+=(2*top-1)){
 //      if() ...
 //    }
-    if(v.empty()) return;
+    v.resize(v.size()+1);
+    v[v.size()-1]=elt;
     bool flag = true;
-    for(unsigned int i=v.size()-1; i!=UINT_MAX && flag;i--){
-      if(elt>v[i]){
-        if(i+1==v.size()) v[i]=elt;
-        else{
+    if(v.size()>2){
+      for(unsigned int i=v.size()-2; i!=UINT_MAX && flag;i--){
+        if(elt>v[i]){
           v[i+1]=v[i];
           v[i]=elt;
         }
+        else flag=false;
       }
-      else flag=false;
     }
   }
 }
