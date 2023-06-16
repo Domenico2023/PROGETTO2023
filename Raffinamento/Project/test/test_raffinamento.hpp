@@ -39,7 +39,7 @@ TEST(TestInsert, TestInsertFalse)
   vector<int> v = {48, 48, 44, 43, 37, 31, 27, 25, 25, 18, 10}, v2;
   v2 = v;
   int x = 5;
-  OrdInsert(v2,x);
+  SortInsert(v2,x);
   EXPECT_EQ(v, v2);
 }
 TEST(TestInsert, TestInsertTrue)
@@ -53,7 +53,7 @@ TEST(TestInsert, TestInsertTrue)
   v3[8]=v3[7];
   v3[7]=v3[6];
   v3[6]=x;
-  OrdInsert(v2,x);
+  SortInsert(v2,x);
   EXPECT_EQ(v3, v2);
 }
     //TEST EDGE
