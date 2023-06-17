@@ -551,11 +551,11 @@ namespace ProjectLibrary
       newEdgeAdd1 = Edge(opposite, old_m, nEdges++);
       newTriangle1 = Triangle({newEdgeAdd1, Split1, T.PointsToEdge(opposite, T.points[1])}, T.id);  //riutilizzo l'id del triangolo cancellato
       newTriangle2 = Triangle({newEdgeAdd1, Split2, T.PointsToEdge(opposite, T.points[0])}, nTriangles++);
-//    //non valido per la ricorsiva
-//      if(uniformity=="uniform"){
-//        Insert(newTriangle1);
-//        Insert(newTriangle2);
-//      }
+
+      if(uniformity=="uniform"){
+        Insert(newTriangle1);
+        Insert(newTriangle2);
+      }
 
       AddEdge(newEdgeAdd1);
       AddTriangle(newTriangle1, newTriangle1.id);
@@ -585,11 +585,6 @@ namespace ProjectLibrary
     AddTriangle(newTriangle1, newTriangle1.id);
     newTriangle2 = Triangle({newEdgeAdd1,newEdgeSplit2,T.PointsToEdge(T.points[1],opposite)},nTriangles++);
     AddTriangle(newTriangle2);
-//    //non valido per la ricorsiva
-//    if(uniformity=="uniform"){
-//      Insert(newTriangle1);
-//      Insert(newTriangle2);
-//    }
 
     Triangle AdjTriangle=FindAdjacence(T, T.MaxEdge());
 
@@ -600,6 +595,10 @@ namespace ProjectLibrary
     if(!newTriangle2.Includes(p1)){
       Edge tmp_e = T.PointsToEdge(T.points[1],T.points[2]);  //T.PointsToEdge è molto più ottimizzato rispetto a FindEdge
       ModifyRow(T.id,newTriangle2.id,tmp_e.id);
+      if(uniformity=="uniform"){Insert(newTriangle2);}
+    }
+    else{
+      if(uniformity=="uniform"){Insert(newTriangle1);}
     }
 
     if(AdjTriangle.id!=UINT_MAX)
@@ -625,6 +624,11 @@ namespace ProjectLibrary
 //    ModifyRow(newTriangle1.id,newTriangle3.id,newEdgeAdd1.id);
     AddCol(newTriangle3.id, Split1.id);
     AddCol(newTriangle4.id, Split2.id);
+    if(uniformity=="uniform"){
+      Insert(newTriangle3);
+      Insert(newTriangle4);
+    }
+
   }
 }
 
