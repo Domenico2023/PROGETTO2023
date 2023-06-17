@@ -335,23 +335,28 @@ namespace ProjectLibrary
     top_theta = {sorted_vec.begin(), sorted_vec.begin()+n_theta};
     return n_theta;
   }
-  bool TriangularMesh::Extract(unsigned int id){
+  bool TriangularMesh::Extract(Triangle &T){
       //estrae il triangolo con id=id dal vettore top_theta
-    if(triangles[id].area>=top_theta[-1].area)
-      for(unsigned int i=0; i<n_theta; i++){
-        if(id==top_theta[i].id){
-          top_theta.erase(top_theta.begin()+i);
-          n_theta--;
-          return true;
+    if(!top_theta.empty()){
+//      if(top_theta[top_theta.size()-1]<=T){
+        for(unsigned int i=0; i<n_theta; i++){
+          if(T.id==top_theta[i].id){
+            top_theta.erase(top_theta.begin()+i);
+            n_theta--;
+            return true;
+          }
         }
-      }
+//      }
+    }
     return false;
   }
   bool TriangularMesh::Insert(Triangle &T){
-    if(!top_theta.empty() && T.area>top_theta[-1].area){
-      SortInsert<Triangle>(top_theta,T);
-      top_theta.pop_back();
-      return true;
+    if(!top_theta.empty()){
+//      if(top_theta[top_theta.size()-1]<=T){
+        SortInsert<Triangle>(top_theta,T);
+        top_theta.pop_back();
+        return true;
+//      }
     }
     return false;
   }
@@ -372,6 +377,9 @@ namespace ProjectLibrary
     Point medio;
     Edge newEdgeAdd1,newEdgeSplit1, newEdgeSplit2;
     Triangle newTriangle1,newTriangle2, T(top_theta[0]);
+
+    // elimino il primo triangolo
+    Extract(T);
 
     medio = T.MaxEdge().Medium(nPoints++);
     AddPoint(medio);  //meglio aggiungerlo prima perché va inserito senza succ e prec
@@ -394,8 +402,7 @@ namespace ProjectLibrary
     InsertRow({newTriangle2.id},newEdgeSplit2.id);
     Edge tmp_e = T.PointsToEdge(T.points[1],T.points[2]);  //T.PointsToEdge è molto più ottimizzato rispetto a FindEdge
     ModifyRow(T.id,newTriangle2.id,tmp_e.id);
-    // elimino il primo triangolo
-    Extract(T.id);
+    //aggiorno top_theta con i nuovi triangoli, se necessario
     if(uniformity=="uniform"){
       Insert(newTriangle1);
       Insert(newTriangle2);
@@ -407,6 +414,10 @@ namespace ProjectLibrary
       else{
         Edge newEdgeAdd2;
         Triangle newTriangle3,newTriangle4;
+
+        // elimino il secondo triangolo, se è nella lista
+        Extract(AdjTriangle);
+
         //trovo il vertice opposto al lato
         Point opposite(AdjTriangle.Opposite(T.MaxEdge()));
         newEdgeAdd2 = Edge(opposite, medio, nEdges++);
@@ -422,8 +433,7 @@ namespace ProjectLibrary
         ModifyRow(AdjTriangle.id,newTriangle4.id,tmp_e.id);
         AddCol(newTriangle3.id,newEdgeSplit1.id);
         AddCol(newTriangle4.id,newEdgeSplit2.id);
-        // elimino il secondo triangolo, se è nella lista
-        Extract(AdjTriangle.id);
+        //aggiorno top_theta con i nuovi triangoli, se necessario
         if(uniformity=="uniform"){
           Insert(newTriangle3);
           Insert(newTriangle4);
@@ -459,7 +469,7 @@ namespace ProjectLibrary
     Edge tmp_e = T.PointsToEdge(T.points[1],T.points[2]);  //T.PointsToEdge è molto più ottimizzato rispetto a FindEdge
     ModifyRow(T.id,newTriangle2.id,tmp_e.id);
     // elimino il primo triangolo
-    Extract(T.id);
+    Extract(T);
     if(uniformity=="uniform"){
       Insert(newTriangle1);
       Insert(newTriangle2);
@@ -484,7 +494,7 @@ namespace ProjectLibrary
       AddCol(newTriangle3.id,newEdgeSplit1.id);
       AddCol(newTriangle4.id,newEdgeSplit2.id);
       // elimino il secondo triangolo, se è nella lista
-      Extract(AdjTriangle.id);
+      Extract(AdjTriangle);
       if(uniformity=="uniform"){
         Insert(newTriangle3);
         Insert(newTriangle4);
@@ -520,7 +530,7 @@ namespace ProjectLibrary
     Edge tmp_e = T.PointsToEdge(T.points[1],T.points[2]);  //T.PointsToEdge è molto più ottimizzato rispetto a FindEdge
     ModifyRow(T.id,newTriangle2.id,tmp_e.id);
 
-    Extract(T.id);
+    Extract(T);
     if(uniformity=="uniform"){
       Insert(newTriangle1);
       Insert(newTriangle2);
@@ -535,16 +545,17 @@ namespace ProjectLibrary
     Triangle newTriangle1,newTriangle2;
     Point opposite(T.Opposite(T.MaxEdge()));
 
-    Extract(T.id);
+    Extract(T);
 
     if(T.MaxEdge()==T.PointsToEdge(p1, p2)){
       newEdgeAdd1 = Edge(opposite, old_m, nEdges++);
       newTriangle1 = Triangle({newEdgeAdd1, Split1, T.PointsToEdge(opposite, T.points[1])}, T.id);  //riutilizzo l'id del triangolo cancellato
       newTriangle2 = Triangle({newEdgeAdd1, Split2, T.PointsToEdge(opposite, T.points[0])}, nTriangles++);
-      if(uniformity=="uniform"){
-        Insert(newTriangle1);
-        Insert(newTriangle2);
-      }
+//    //non valido per la ricorsiva
+//      if(uniformity=="uniform"){
+//        Insert(newTriangle1);
+//        Insert(newTriangle2);
+//      }
 
       AddEdge(newEdgeAdd1);
       AddTriangle(newTriangle1, newTriangle1.id);
@@ -574,10 +585,11 @@ namespace ProjectLibrary
     AddTriangle(newTriangle1, newTriangle1.id);
     newTriangle2 = Triangle({newEdgeAdd1,newEdgeSplit2,T.PointsToEdge(T.points[1],opposite)},nTriangles++);
     AddTriangle(newTriangle2);
-    if(uniformity=="uniform"){
-      Insert(newTriangle1);
-      Insert(newTriangle2);
-    }
+//    //non valido per la ricorsiva
+//    if(uniformity=="uniform"){
+//      Insert(newTriangle1);
+//      Insert(newTriangle2);
+//    }
 
     Triangle AdjTriangle=FindAdjacence(T, T.MaxEdge());
 
