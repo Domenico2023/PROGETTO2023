@@ -112,6 +112,7 @@ namespace ProjectLibrary
       unsigned int nTriangles=0;
       vector<Triangle> triangles;
       vector<vector<unsigned int>> adjacent;
+      unsigned int nRows=0;
       vector<Triangle> top_theta; //si può ottimizzare salvando solo gli id
       double theta;
       unsigned int n_theta;
@@ -126,6 +127,7 @@ namespace ProjectLibrary
       void AddPoint(Point point, unsigned int indice=UINT_MAX);
       void AddEdge(Edge edge, unsigned int indice=UINT_MAX);
       void AddTriangle(Triangle triangle, unsigned int indice=UINT_MAX);
+      void AdjustSize();
       Edge FindEdge(Point p1, Point p2);
       Edge FindEdge(unsigned int id_e);
       Point FindPoint(unsigned int id_p);
