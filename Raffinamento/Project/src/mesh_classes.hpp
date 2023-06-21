@@ -104,7 +104,7 @@ namespace ProjectLibrary
 
   class TriangularMesh
   {
-    public: //protected:
+    protected:
       unsigned int nPoints=0;
       vector<Point> points;
       unsigned int nEdges=0;
@@ -137,18 +137,22 @@ namespace ProjectLibrary
       void ExportParaviewfile();
       void ExportVTK();
       void ExportMatrix();
-      double MediaArea(unsigned int exp=1){
-        double somma=0;
-        for(Triangle &t : triangles){
-          somma+=pow(t.area,exp);
-        }
-        return somma/nTriangles;
+      void Show(){
+        cout<<"Test: "<<test<<" ;  Ref.Percentage: "<<theta*100<<" ;  Uniformity: "<<uniformity<<endl;
+        cout<<"Nr triangles: "<<nTriangles<<" ;  Average Area: "<<AvgArea()<<" ;  Variance (Area): "<<Variance()<<endl;
       }
-      double Varianza(){
-        double media=MediaArea(1);
-        double mediaQuadra=MediaArea(2);
-
-        return mediaQuadra-pow(media,2);
+      double AvgArea(unsigned int exp=1){
+          //Calcola la media dell'exp-esima potenza delle aree
+        double sum=0;
+        for(Triangle &t : triangles){
+          sum+=pow(t.area,exp);
+        }
+        return sum/nTriangles;
+      }
+      double Variance(){
+        double avg=AvgArea(1);
+        double quadAvg=AvgArea(2);
+        return quadAvg-pow(avg,2);
       }
 
     private:
