@@ -57,20 +57,53 @@ namespace SortLibrary {
 
 namespace InsertLibrary {
 
+//  template<typename T>
+//  void SortInsert(vector<T>& v, T &elt);  //, string from="bottom");
   template<typename T>
-  void SortInsert(vector<T>& v, T &elt);  //, string from="bottom");
+  void SortInsert(vector<T>& v, T &elt, unsigned int size=UINT_MAX);  //, string from="bottom");
 
-  template<typename T>
-  void SortInsert(vector<T>& v, T &elt){
-//    bool top=(from=="top")? true : false;
-//    for(int i=top*v.size()-1; i>=0 && i<v.size();i+=(2*top-1)){
-//      if() ...
+//  template<typename T>
+//  void SortInsert(vector<T>& v, T &elt){
+//    v.resize(v.size()+1);
+//    v[v.size()-1]=elt;
+//    bool flag = true;
+//    if(v.size()>=2){
+//      for(unsigned int i=v.size()-2; i!=UINT_MAX && flag;i--){
+//        if(elt>v[i]){
+//          v[i+1]=v[i];
+//          v[i]=elt;
+//        }
+//        else flag=false;
+//      }
 //    }
-    v.resize(v.size()+1);
-    v[v.size()-1]=elt;
+//  }
+  template<typename T>
+  void SortInsert(vector<T>& v, T &elt, unsigned int size){
+      // inserimento in vettore ordinato (ordine decrescente)
+    if(size==0){v.resize(size); return;}
+    if(size==1){   // no ciclo
+      if(elt>v.front())
+        v[0]=elt;
+      v.resize(size);
+      return;
+    }
+    if(size==v.size()){
+      if(elt>v[size-1])
+        v[size-1]=elt;
+    }
+    else if(size>v.size()){
+      size=v.size()+1;
+      v.resize(size);
+      v[size-1]=elt;
+    }
+    else{   //if(size<v.size()){
+      if(elt>v[size-1])
+        v[size-1]=elt;
+      v.resize(size);
+    }
     bool flag = true;
-    if(v.size()>2){
-      for(unsigned int i=v.size()-2; i!=UINT_MAX && flag;i--){
+    if(v.size()>=2){
+      for(unsigned int i=size-2; i!=UINT_MAX && flag;i--){
         if(elt>v[i]){
           v[i+1]=v[i];
           v[i]=elt;
@@ -79,6 +112,7 @@ namespace InsertLibrary {
       }
     }
   }
+
 }
 
 

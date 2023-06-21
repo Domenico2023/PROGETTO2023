@@ -370,8 +370,8 @@ namespace ProjectLibrary
   bool TriangularMesh::Insert(Triangle &T){
     if(!top_theta.empty()){
 //      if(top_theta[top_theta.size()-1]<=T){
-        SortInsert<Triangle>(top_theta,T);
-        top_theta.pop_back();
+        SortInsert<Triangle>(top_theta,T,n_theta);
+//        top_theta.pop_back();
         return true;
 //      }
     }
