@@ -90,6 +90,7 @@ namespace InsertLibrary {
     if(size==v.size()){
       if(elt>v[size-1])
         v[size-1]=elt;
+//      else return;
     }
     else if(size>v.size()){
       size=v.size()+1;
@@ -97,9 +98,10 @@ namespace InsertLibrary {
       v[size-1]=elt;
     }
     else{   //if(size<v.size()){
+      v.resize(size);
       if(elt>v[size-1])
         v[size-1]=elt;
-      v.resize(size);
+//      else return;
     }
     bool flag = true;
     if(v.size()>=2){

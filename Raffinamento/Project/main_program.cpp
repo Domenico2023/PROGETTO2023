@@ -10,6 +10,8 @@ int main(int argc, char *argv[])
   vector<short int> test;
   test = {1,2};
   vector<double> theta;
+  vector<string> levels={"base", "advanced"};
+  vector<string> uniformity={"non-uniform","uniform"};
 
   if(argc > 1)
     for(int i=1;i<argc;i++)
@@ -19,11 +21,16 @@ int main(int argc, char *argv[])
 
   for(double &percentage : theta){
     for(short int &t : test){
-      TriangularMesh M("Cell0Ds.csv","Cell1Ds.csv","Cell2Ds.csv",t);
-      M.Refining(percentage,"advanced","uniform");
-      M.ExportMesh({0});
-//      M.ExportParaviewfile();
-      M.ExportVTK();
+      for(string &level : levels){
+        for(string &unif : uniformity){
+          TriangularMesh M("Cell0Ds.csv","Cell1Ds.csv","Cell2Ds.csv",t);
+          M.Refining(percentage,level,unif);
+    //      cout<<t<<" "<<percentage<<" "<<level<<" "<<unif<<" "<<M.nTriangles<<" "<<M.MediaArea()<<" "<<M.Varianza()<<endl;
+          M.ExportMesh({0});
+    //      M.ExportParaviewfile();
+          M.ExportVTK();
+        }
+      }
     }
   }
   return 0;

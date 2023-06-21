@@ -104,7 +104,7 @@ namespace ProjectLibrary
 
   class TriangularMesh
   {
-    protected:
+    public: //protected:
       unsigned int nPoints=0;
       vector<Point> points;
       unsigned int nEdges=0;
@@ -137,6 +137,19 @@ namespace ProjectLibrary
       void ExportParaviewfile();
       void ExportVTK();
       void ExportMatrix();
+      double MediaArea(unsigned int exp=1){
+        double somma=0;
+        for(Triangle &t : triangles){
+          somma+=pow(t.area,exp);
+        }
+        return somma/nTriangles;
+      }
+      double Varianza(){
+        double media=MediaArea(1);
+        double mediaQuadra=MediaArea(2);
+
+        return mediaQuadra-pow(media,2);
+      }
 
     private:
       bool ImportCell0D(const string cell0D);

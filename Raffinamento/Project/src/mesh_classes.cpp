@@ -276,6 +276,7 @@ namespace ProjectLibrary
   void TriangularMesh::AddPoint(Point point, unsigned int indice){
       //aggiunge un punto alla mesh in posizione data o in coda
     if(indice>=nPoints){
+      indice=nPoints;
       if(indice>=points.size())
         points.resize(nPoints*2);
       points[nPoints++]=point;
@@ -285,6 +286,7 @@ namespace ProjectLibrary
   void TriangularMesh::AddEdge(Edge edge, unsigned int indice){
       //aggiunge un lato in posizione data o in coda
     if(indice>=nEdges){
+      indice=nEdges;
       if(indice>=edges.size())
         edges.resize(nEdges*2);
       edges[nEdges++]=edge;
@@ -294,6 +296,7 @@ namespace ProjectLibrary
   void TriangularMesh::AddTriangle(Triangle triangle, unsigned int indice){
       //aggiunge un triangolo in posizione data o in coda
     if(indice>=nTriangles){
+      indice=nTriangles;
       if(indice>=triangles.size())
         triangles.resize(nTriangles*2);
       triangles[nTriangles++]=triangle;
@@ -319,6 +322,7 @@ namespace ProjectLibrary
       //inserisce un nuovo lato, con le sue adiacenze, all'interno della matrice.
       //se il nuovo lato ha un id già utilizzato, sostituisce la riga corrispondente al lato rimpiazzato
     if(id_edge>=nRows){
+        id_edge=nRows;
       if(id_edge>=adjacent.size())
         adjacent.resize(nRows*2);
       adjacent[nRows].resize(t.size());
@@ -369,9 +373,8 @@ namespace ProjectLibrary
   }
   bool TriangularMesh::Insert(Triangle &T){
     if(!top_theta.empty()){
-//      if(top_theta[top_theta.size()-1]<=T){
+//      if(top_theta[n_theta-1]<=T){
         SortInsert<Triangle>(top_theta,T,n_theta);
-//        top_theta.pop_back();
         return true;
 //      }
     }
@@ -379,6 +382,7 @@ namespace ProjectLibrary
   }
   void TriangularMesh::Refining(double theta, string level, string uniformity){
     //chiama DivideTriangle finché non ha diviso tutti i triangoli del vettore top_theta
+    if(theta>1 || theta<0) {cerr<<"Error: not valid percentage. Must be between 0 and 1"<<endl; throw(1);}
     this->theta = theta;
     this->level = level;
     this->uniformity = uniformity;
